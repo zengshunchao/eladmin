@@ -46,10 +46,10 @@ public class UserController {
                 int page = wxUserDtoList.size();
                 wxUserDtoList = PageUtil.toPage(pageable.getPageNumber(), pageable.getPageSize(), wxUserDtoList);
                 for (WxUserDto info : wxUserDtoList) {
-                    if (null != info.getParentId()) {
-                        WxUser user = wxUserService.queryById(info.getParentId());
-                        info.setParentName(user.getNickName());
-                    }
+//                    if (null != info.getParentId()) {
+//                        WxUser user = wxUserService.queryById(info.getParentId());
+//                        info.setParentName(user.getNickName());
+//                    }
                 }
                 return new ResponseEntity<>(PageUtil.toPage(wxUserDtoList, page), HttpStatus.OK);
             }
