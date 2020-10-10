@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.CourseDao">
+
+    <resultMap type="com.study.web.dto.CourseInfoDto" id="CourseMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+        <result property="courseMoney" column="course_money" jdbcType="DOUBLE"/>
+        <result property="courseCommission" column="course_commission" jdbcType="DOUBLE"/>
+        <result property="branchName" column="branch_name" jdbcType="VARCHAR"/>
+        <result property="branchAddress" column="branch_address" jdbcType="VARCHAR"/>
+        <result property="longitude" column="longitude" jdbcType="VARCHAR"/>
+        <result property="latitude" column="latitude" jdbcType="VARCHAR"/>
+        <result property="actionArea" column="action_area" jdbcType="VARCHAR"/>
+        <result property="onlineTime" column="online_time" jdbcType="TIMESTAMP"/>
+        <result property="offlineTime" column="offline_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="BaseSql">
+        id, course_name, course_money, course_commission, branch_name, branch_address,longitude,latitude,action_area, online_time, offline_time,
+        create_time, create_user
+    </sql>
+    <!--查询单个-->
+    <select id="queryById" resultMap="CourseMap" parameterType="java.lang.Long">
+        select
+        <include refid="BaseSql"></include>
+        from t_course
+        where id = #{id}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="CourseMap">
+        select
+        <include refid="BaseSql"></include>
+        from t_course
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and course_name like concat('%',#{courseName},'%')
+            </if>
+            <if test="courseMoney != null">
+                and course_money = #{courseMoney}
+            </if>
+            <if test="courseCommission != null">
+                and course_commission = #{courseCommission}
+            </if>
+            <if test="branchName != null and branchName != ''">
+                and branch_name = #{branchName}
+            </if>
+            <if test="branchAddress != null and branchAddress != ''">
+                and branch_address = #{branchAddress}
+            </if>
+            <if test="actionArea != null and actionArea != ''">
+                and action_area = #{actionArea}
+            </if>
+            <if test="onlineTime != null and offlineTime == null">
+                and online_time <![CDATA[>]]> #{onlineTime}
+            </if>
+            <if test="offlineTime != null and onlineTime == null">
+                and offline_time <![CDATA[<]]> #{offlineTime}
+            </if>
+            <if test="offlineTime != null and onlineTime != null">
+                and online_time <![CDATA[<=]]> #{onlineTime}
+                and offline_time <![CDATA[>]]> #{offlineTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="createUser != null and createUser != ''">
+                and create_user = #{createUser}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="wxQueryCourseList" resultMap="CourseMap">
+        SELECT
+        <include refid="BaseSql"></include>
+        FROM t_course
+        where online_time <![CDATA[<=]]> now() and offline_time <![CDATA[>]]> now()
+        order by online_time desc limit #{pageNo},#{pageSize}
+    </select>
+
+    <select id="wxQueryCourseListTotal" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM t_course
+        where online_time <![CDATA[<=]]> now() and offline_time <![CDATA[>]]> now()
+        order by online_time
+    </select>
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="com.study.web.entity.Course">
+        insert into t_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">course_name ,</if>
+            <if test="courseMoney != null and courseMoney != ''">course_money ,</if>
+            <if test="courseCommission != null and courseCommission != ''">course_commission ,</if>
+            <if test="branchName != null and branchName != ''">branch_name ,</if>
+            <if test="branchAddress != null and branchAddress != ''">branch_address ,</if>
+            <if test="longitude != null and longitude != ''">longitude ,</if>
+            <if test="latitude != null and latitude != ''">latitude ,</if>
+            <if test="actionArea != null and actionArea != ''">action_area ,</if>
+            <if test="onlineTime != null">online_time ,</if>
+            <if test="offlineTime != null">offline_time ,</if>
+            <if test="createTime != null">create_time ,</if>
+            <if test="createUser != null and createUser != ''">create_user ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">#{courseName} ,</if>
+            <if test="courseMoney != null and courseMoney != ''">#{courseMoney} ,</if>
+            <if test="courseCommission != null and courseCommission != ''">#{courseCommission} ,</if>
+            <if test="branchName != null and branchName != ''">#{branchName} ,</if>
+            <if test="branchAddress != null and branchAddress != ''">#{branchAddress} ,</if>
+            <if test="longitude != null and longitude != ''">#{longitude} ,</if>
+            <if test="latitude != null and latitude != ''">#{latitude} ,</if>
+            <if test="actionArea != null and actionArea != ''">#{actionArea} ,</if>
+            <if test="onlineTime != null">#{onlineTime} ,</if>
+            <if test="offlineTime != null">#{offlineTime} ,</if>
+            <if test="createTime != null">#{createTime} ,</if>
+            <if test="createUser != null and createUser != ''">#{createUser} ,</if>
+        </trim>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_course
+        <set>
+            <if test="courseName != null and courseName != ''">
+                course_name = #{courseName},
+            </if>
+            <if test="courseMoney != null">
+                course_money = #{courseMoney},
+            </if>
+            <if test="courseCommission != null">
+                course_commission = #{courseCommission},
+            </if>
+            <if test="branchName != null and branchName != ''">
+                branch_name = #{branchName},
+            </if>
+            <if test="branchAddress != null and branchAddress != ''">
+                branch_address = #{branchAddress},
+            </if>
+            <if test="longitude != null and longitude != ''">
+                longitude = #{longitude},
+            </if>
+            <if test="latitude != null and latitude != ''">
+                latitude = #{latitude},
+            </if>
+            <if test="actionArea != null and actionArea != ''">
+                action_area = #{actionArea},
+            </if>
+            <if test="onlineTime != null">
+                online_time = #{onlineTime},
+            </if>
+            <if test="offlineTime != null">
+                offline_time = #{offlineTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createUser != null and createUser != ''">
+                create_user = #{createUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from t_course where id in
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            ${id}
+        </foreach>
+    </delete>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from t_course where id = #{id}
+    </delete>
+
+</mapper>

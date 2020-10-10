@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.DistributionDao">
+
+    <resultMap type="com.study.web.entity.Distribution" id="DistributionMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DistributionMap">
+        select
+          id, wx_user_id, parent_id, create_time
+        from t_distribution
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DistributionMap">
+        select
+          id, wx_user_id, parent_id, create_time
+        from t_distribution
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="DistributionMap">
+        select
+        id, wx_user_id, parent_id, create_time
+        from t_distribution
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="wxUserId != null">
+                and wx_user_id = #{wxUserId}
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_distribution(wx_user_id, parent_id, create_time)
+        values (#{wxUserId}, #{parentId}, #{createTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_distribution
+        <set>
+            <if test="wxUserId != null">
+                wx_user_id = #{wxUserId},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from t_distribution where id = #{id}
+    </delete>
+
+</mapper>

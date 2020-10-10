@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.OrderCourseRelDao">
+
+    <resultMap type="com.study.web.entity.OrderCourseRel" id="OrderCourseRelMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderId" column="order_id" jdbcType="BIGINT"/>
+        <result property="courseId" column="course_id" jdbcType="BIGINT"/>
+        <result property="courseNumber" column="course_number" jdbcType="INTEGER"/>
+        <result property="shareId" column="share_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="OrderCourseRelMap">
+        select
+          id, order_id, course_id, course_number, share_id
+        from t_order_course_rel
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OrderCourseRelMap">
+        select
+          id, order_id, course_id, course_number, share_id
+        from t_order_course_rel
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="OrderCourseRelMap">
+        select
+        id, order_id, course_id, course_number, share_id
+        from t_order_course_rel
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="orderId != null">
+                and order_id = #{orderId}
+            </if>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+            <if test="courseNumber != null">
+                and course_number = #{courseNumber}
+            </if>
+            <if test="shareId != null">
+                and share_id = #{shareId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_order_course_rel(order_id, course_id, course_number, share_id)
+        values (#{orderId}, #{courseId}, #{courseNumber}, #{shareId})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_order_course_rel
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId},
+            </if>
+            <if test="courseId != null">
+                course_id = #{courseId},
+            </if>
+            <if test="courseNumber != null">
+                course_number = #{courseNumber},
+            </if>
+            <if test="shareId != null">
+                share_id = #{shareId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from t_order_course_rel where id = #{id}
+    </delete>
+
+</mapper>

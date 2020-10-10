@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.PictureDao">
+
+    <resultMap type="com.study.web.entity.Picture" id="PictureMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="pictureName" column="picture_name" jdbcType="VARCHAR"/>
+        <result property="pictureUrl" column="picture_url" jdbcType="VARCHAR"/>
+        <result property="pictureType" column="picture_type" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="BaseSql">id, picture_name, picture_url,picture_type, create_time, create_user</sql>
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="PictureMap">
+        select
+        id, picture_name, picture_url,picture_type, create_time, create_user
+        from t_picture
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="pictureName != null and pictureName != ''">
+                and picture_name = #{pictureName}
+            </if>
+            <if test="pictureUrl != null and pictureUrl != ''">
+                and picture_url = #{pictureUrl}
+            </if>
+            <if test="pictureType != null">
+                and picture_type = #{pictureType}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="createUser != null and createUser != ''">
+                and create_user = #{createUser}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="com.study.web.entity.Picture">
+        insert into t_picture
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pictureName != null and pictureName != ''">picture_name ,</if>
+            <if test="pictureUrl != null and pictureUrl != ''">picture_url ,</if>
+            <if test="pictureType != null">picture_type ,</if>
+            <if test="createTime != null">create_time ,</if>
+            <if test="createUser != null and createUser != ''">create_user ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pictureName != null and pictureName != ''">#{pictureName} ,</if>
+            <if test="pictureUrl != null and pictureUrl != ''">#{pictureUrl} ,</if>
+            <if test="pictureType != null">#{pictureType} ,</if>
+            <if test="createTime != null">#{createTime} ,</if>
+            <if test="createUser != null and createUser != ''">#{createUser} ,</if>
+        </trim>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update" parameterType="com.study.web.entity.Picture">
+        update t_picture
+        <set>
+            <if test="pictureName != null and pictureName != ''">
+                picture_name = #{pictureName},
+            </if>
+            <if test="pictureUrl != null and pictureUrl != ''">
+                picture_url = #{pictureUrl},
+            </if>
+            <if test="pictureType != null">
+                picture_type = #{pictureType},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createUser != null and createUser != ''">
+                create_user = #{createUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="queryPictureList" resultMap="PictureMap" parameterType="java.lang.Long">
+        select t1.id, t1.picture_name, t1.picture_url,t1.picture_type, t1.create_time, t1.create_user
+        from t_picture t1
+        left JOIN t_course_picture_rel t2 on t1.id = t2.picture_id
+        WHERE t2.course_id = #{courseId}
+    </select>
+    <select id="queryPictureListByType" resultMap="PictureMap">
+        select t1.id, t1.picture_name, t1.picture_url,t1.picture_type, t1.create_time, t1.create_user
+        from t_picture t1
+        left JOIN t_course_picture_rel t2 on t1.id = t2.picture_id
+        WHERE t2.course_id = #{courseId} and t1.picture_type = #{pictureType}
+    </select>
+
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from t_picture where id in
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            ${id}
+        </foreach>
+    </delete>
+</mapper>

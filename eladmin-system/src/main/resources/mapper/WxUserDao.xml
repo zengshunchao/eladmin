@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.WxUserDao">
+
+    <resultMap type="com.study.web.entity.WxUser" id="WxUserMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="openId" column="open_id" jdbcType="VARCHAR"/>
+        <result property="sessionKey" column="session_key" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="INTEGER"/>
+        <result property="wxLanguage" column="wx_language" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
+        <result property="province" column="province" jdbcType="VARCHAR"/>
+        <result property="country" column="country" jdbcType="VARCHAR"/>
+        <result property="avatarUrl" column="avatar_url" jdbcType="VARCHAR"/>
+        <result property="realName" column="real_name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.study.web.dto.WxUserDto" id="BaseMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="openId" column="open_id" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="INTEGER"/>
+        <result property="wxLanguage" column="wx_language" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
+        <result property="province" column="province" jdbcType="VARCHAR"/>
+        <result property="country" column="country" jdbcType="VARCHAR"/>
+        <result property="avatarUrl" column="avatar_url" jdbcType="VARCHAR"/>
+        <result property="realName" column="real_name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="BaseResultSql">
+        id, open_id, session_key, nick_name, gender, wx_language, city, province, country, avatar_url,distribution_flag, parent_id,create_time
+    </sql>
+    <!--查询单个-->
+    <select id="queryById" resultMap="WxUserMap">
+        select
+        <include refid="BaseResultSql"></include>
+        from t_wx_user
+        where id = #{id}
+    </select>
+
+    <select id="queryByOpenId" resultMap="WxUserMap">
+        select
+        <include refid="BaseResultSql"></include>
+        from t_wx_user
+        where open_id = #{openId}
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="WxUserMap">
+        select
+        <include refid="BaseResultSql"></include>
+        from t_wx_user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="WxUserMap">
+        select
+        <include refid="BaseResultSql"></include>
+        from t_wx_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="openId != null and openId != ''">
+                and open_id = #{openId}
+            </if>
+            <if test="sessionKey != null and sessionKey != ''">
+                and session_key = #{sessionKey}
+            </if>
+            <if test="nickName != null and nickName != ''">
+                and nick_name = #{nickName}
+            </if>
+            <if test="gender != null">
+                and gender = #{gender}
+            </if>
+            <if test="wxLanguage != null and wxLanguage != ''">
+                and wx_language = #{wxLanguage}
+            </if>
+            <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="province != null and province != ''">
+                and province = #{province}
+            </if>
+            <if test="country != null and country != ''">
+                and country = #{country}
+            </if>
+            <if test="avatarUrl != null and avatarUrl != ''">
+                and avatar_url = #{avatarUrl}
+            </if>
+            <if test="distributionFlag != null">
+                and distribution_flag = #{distributionFlag}
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_wx_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openId != null and openId != ''">open_id ,</if>
+            <if test="sessionKey != null and sessionKey != ''">session_key ,</if>
+            <if test="nickName != null and nickName != ''">nick_name ,</if>
+            <if test="gender != null">gender ,</if>
+            <if test="wxLanguage != null and wxLanguage != ''">wx_language ,</if>
+            <if test="city != null and city != ''">city ,</if>
+            <if test="province != null and province != ''">province ,</if>
+            <if test="country != null and country != ''">country ,</if>
+            <if test="avatarUrl != null and avatarUrl != ''">avatar_url ,</if>
+            <if test="distributionFlag != null">distribution_flag ,</if>
+            <if test="parentId != null">parent_id ,</if>
+            <if test="createTime != null">create_time ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null and openId != ''">#{openId} ,</if>
+            <if test="sessionKey != null and sessionKey != ''">#{sessionKey} ,</if>
+            <if test="nickName != null and nickName != ''">#{nickName} ,</if>
+            <if test="gender != null">#{gender} ,</if>
+            <if test="wxLanguage != null and wxLanguage != ''">#{wxLanguage} ,</if>
+            <if test="city != null and city != ''">#{city} ,</if>
+            <if test="province != null and province != ''">#{province} ,</if>
+            <if test="country != null and country != ''">#{country} ,</if>
+            <if test="avatarUrl != null and avatarUrl != ''">#{avatarUrl} ,</if>
+            <if test="distributionFlag != null">#{distributionFlag} ,</if>
+            <if test="parentId != null">#{parentId} ,</if>
+            <if test="createTime != null">#{createTime} ,</if>
+        </trim>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update" parameterType="com.study.web.entity.WxUser">
+        update t_wx_user
+        <set>
+            <if test="openId != null and openId != ''">
+                open_id = #{openId},
+            </if>
+            <if test="sessionKey != null and sessionKey != ''">
+                session_key = #{sessionKey},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                nick_name = #{nickName},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="wxLanguage != null and wxLanguage != ''">
+                wx_language = #{language},
+            </if>
+            <if test="city != null and city != ''">
+                city = #{city},
+            </if>
+            <if test="province != null and province != ''">
+                province = #{province},
+            </if>
+            <if test="country != null and country != ''">
+                country = #{country},
+            </if>
+            <if test="avatarUrl != null and avatarUrl != ''">
+                avatar_url = #{avatarUrl},
+            </if>
+            <if test="distributionFlag != null">
+                distribution_flag = #{distributionFlag},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from t_wx_user where id = #{id}
+    </delete>
+
+    <select id="queryWxUserList" resultMap="BaseMap">
+        select
+        <include refid="BaseResultSql"></include>
+        from t_wx_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="openId != null and openId != ''">
+                and open_id = #{openId}
+            </if>
+            <if test="sessionKey != null and sessionKey != ''">
+                and session_key = #{sessionKey}
+            </if>
+            <if test="nickName != null and nickName != ''">
+                and nick_name = #{nickName}
+            </if>
+            <if test="gender != null">
+                and gender = #{gender}
+            </if>
+            <if test="wxLanguage != null and wxLanguage != ''">
+                and wx_language = #{wxLanguage}
+            </if>
+            <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="province != null and province != ''">
+                and province = #{province}
+            </if>
+            <if test="country != null and country != ''">
+                and country = #{country}
+            </if>
+            <if test="avatarUrl != null and avatarUrl != ''">
+                and avatar_url = #{avatarUrl}
+            </if>
+            <if test="distributionFlag != null">
+                and distribution_flag = #{distributionFlag}
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+</mapper>

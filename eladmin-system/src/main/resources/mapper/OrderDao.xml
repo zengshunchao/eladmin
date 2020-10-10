@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.OrderDao">
+
+    <resultMap type="com.study.web.entity.Order" id="OrderMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderNumber" column="order_number" jdbcType="VARCHAR"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="money" column="money" jdbcType="DECIMAL"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="autoCheckTime" column="auto_check_time" jdbcType="TIMESTAMP"/>
+        <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.study.web.dto.OrderDto" id="BaseDtoMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderNumber" column="order_number" jdbcType="VARCHAR"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="money" column="money" jdbcType="DECIMAL"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="autoCheckTime" column="auto_check_time" jdbcType="TIMESTAMP"/>
+        <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="BaseSql">
+        id, order_number, wx_user_id, money, status, remark, pay_time, auto_check_time, finish_time, create_time
+    </sql>
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseDtoMap">
+        select
+        <include refid="BaseSql"></include>
+        from t_order
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OrderMap">
+        select
+        <include refid="BaseSql"></include>
+        from t_order
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="OrderMap">
+        select
+        <include refid="BaseSql"></include>
+        from t_order
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="orderNumber != null and orderNumber != ''">
+                and order_number = #{orderNumber}
+            </if>
+            <if test="wxUserId != null">
+                and wx_user_id = #{wxUserId}
+            </if>
+            <if test="money != null">
+                and money = #{money}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="payTime != null">
+                and pay_time = #{payTime}
+            </if>
+            <if test="autoCheckTime != null">
+                and auto_check_time = #{autoCheckTime}
+            </if>
+            <if test="finishTime != null">
+                and finish_time = #{finishTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryByStatus" resultMap="BaseDtoMap">
+        select
+        <include refid="BaseSql"></include>
+        from t_order
+        <where>
+            <if test="wxUserId != null">
+                and wx_user_id = #{wxUserId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by  create_time desc
+    </select>
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_order(order_number, wx_user_id, money, status, remark, pay_time, auto_check_time, finish_time, create_time)
+        values (#{orderNumber}, #{wxUserId}, #{money}, #{status}, #{remark}, #{payTime}, #{autoCheckTime}, #{finishTime}, #{createTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_order
+        <set>
+            <if test="orderNumber != null and orderNumber != ''">
+                order_number = #{orderNumber},
+            </if>
+            <if test="wxUserId != null">
+                wx_user_id = #{wxUserId},
+            </if>
+            <if test="money != null">
+                money = #{money},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="payTime != null">
+                pay_time = #{payTime},
+            </if>
+            <if test="autoCheckTime != null">
+                auto_check_time = #{autoCheckTime},
+            </if>
+            <if test="finishTime != null">
+                finish_time = #{finishTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from t_order where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.WalletDao">
+
+    <resultMap type="com.study.web.entity.Wallet" id="WalletMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="allMoney" column="all_money" jdbcType="DECIMAL"/>
+        <result property="cashMoney" column="cash_money" jdbcType="DECIMAL"/>
+        <result property="mayCashMoney" column="may_cash_money" jdbcType="DECIMAL"/>
+        <result property="lockMoney" column="lock_money" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="WalletMap">
+        select
+          id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
+        from study.t_wallet
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="WalletMap">
+        select
+          id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
+        from study.t_wallet
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="WalletMap">
+        select
+        id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
+        from study.t_wallet
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="wxUserId != null">
+                and wx_user_id = #{wxUserId}
+            </if>
+            <if test="allMoney != null">
+                and all_money = #{allMoney}
+            </if>
+            <if test="cashMoney != null">
+                and cash_money = #{cashMoney}
+            </if>
+            <if test="mayCashMoney != null">
+                and may_cash_money = #{mayCashMoney}
+            </if>
+            <if test="lockMoney != null">
+                and lock_money = #{lockMoney}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into study.t_wallet(wx_user_id, all_money, cash_money, may_cash_money, lock_money)
+        values (#{wxUserId}, #{allMoney}, #{cashMoney}, #{mayCashMoney}, #{lockMoney})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update study.t_wallet
+        <set>
+            <if test="wxUserId != null">
+                wx_user_id = #{wxUserId},
+            </if>
+            <if test="allMoney != null">
+                all_money = #{allMoney},
+            </if>
+            <if test="cashMoney != null">
+                cash_money = #{cashMoney},
+            </if>
+            <if test="mayCashMoney != null">
+                may_cash_money = #{mayCashMoney},
+            </if>
+            <if test="lockMoney != null">
+                lock_money = #{lockMoney},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from study.t_wallet where id = #{id}
+    </delete>
+
+</mapper>
