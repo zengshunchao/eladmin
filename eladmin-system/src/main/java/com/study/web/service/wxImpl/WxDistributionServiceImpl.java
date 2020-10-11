@@ -1,6 +1,7 @@
 package com.study.web.service.wxImpl;
 
 import com.study.web.dao.DistributionDao;
+import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
 import com.study.web.service.WxDistributionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,22 @@ public class WxDistributionServiceImpl implements WxDistributionService {
     @Override
     public boolean deleteById(Long id) {
         return this.distributionDao.deleteById(id) > 0;
+    }
+
+    @Override
+    public Distribution queryByWxUserId(Long wxUserid) {
+        return this.distributionDao.queryByWxUserId(wxUserid);
+    }
+
+    /**
+     * 变更分销员
+     * @param distribution
+     */
+    @Override
+    public void addDistribution(Distribution distribution) {
+        Distribution temp = distributionDao.queryByWxUserId(distribution.getWxUserId());
+        if(null == temp){
+            distributionDao.insert(distribution);
+        }
     }
 }

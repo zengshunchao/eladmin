@@ -1,5 +1,6 @@
 package com.study.web.dao;
 
+import com.study.web.dto.CommissionDto;
 import com.study.web.entity.Commission;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -64,5 +65,19 @@ public interface CommissionDao {
      * @return 影响行数
      */
     int deleteById(Long id);
+
+    /**
+     * 分页查询数据
+     * @param commissionDto
+     * @return
+     */
+    List<CommissionDto> queryList(CommissionDto commissionDto);
+
+    /**
+     * 总记录数
+     * @param commissionDto
+     * @return
+     */
+    int totalList(CommissionDto commissionDto);
 
 }

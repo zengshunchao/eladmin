@@ -3,7 +3,9 @@ package com.study.web.service.wxImpl;
 import com.alibaba.fastjson.JSONObject;
 import com.study.web.dao.WxUserDao;
 import com.study.web.dto.WxUserDto;
+import com.study.web.entity.Distribution;
 import com.study.web.entity.WxUser;
+import com.study.web.service.WxDistributionService;
 import com.study.web.service.WxLoginService;
 import com.study.web.util.Constants;
 import com.study.web.util.OkHttpRequestUtil;
@@ -22,6 +24,9 @@ public class WxLoginServiceImpl implements WxLoginService {
     @Autowired
     private WxUserDao wxUserDao;
 
+    @Autowired
+    private WxDistributionService wxDistributionService;
+
     @Override
     public WxUser wxLogin(WxUserDto wxUserDto) {
 
@@ -31,6 +36,8 @@ public class WxLoginServiceImpl implements WxLoginService {
             wxUser = wxUserDao.queryByOpenId(wxUserDto.getOpenId());
         }
         if (wxUser != null) {
+            //是否是分销员
+            distribution(wxUser);
             return wxUser;
         }
         // 配置请求参数
@@ -52,6 +59,8 @@ public class WxLoginServiceImpl implements WxLoginService {
         }
         wxUser = wxUserDao.queryByOpenId(openid);
         if (wxUser != null) {
+            //是否是分销员
+            distribution(wxUser);
             return wxUser;
         }
         if (wxUser == null) {
@@ -75,16 +84,15 @@ public class WxLoginServiceImpl implements WxLoginService {
 
     }
 
-    /**
-     * 变更分销员
-     *
-     * @param wxUserDto
-     */
-    @Override
-    public void updateDistribution(WxUserDto wxUserDto) {
-        WxUser user = new WxUser();
-        BeanUtils.copyProperties(wxUserDto, user);
-        wxUserDao.update(user);
+    //是否是分销员
+    private void distribution(WxUser wxUser){
+        if (wxUser != null) {
+            Distribution distribution = wxDistributionService.queryByWxUserId(wxUser.getId());
+            if(null != distribution){
+                wxUser.setDistributionFlag(1);
+                wxUser.setParentId(distribution.getParentId());
+            }
+        }
     }
 
     @Override

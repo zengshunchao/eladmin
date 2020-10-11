@@ -1,5 +1,6 @@
 package com.study.web.service;
 
+import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
 
 import java.util.List;
@@ -53,4 +54,12 @@ public interface WxDistributionService {
      */
     boolean deleteById(Long id);
 
+
+    Distribution queryByWxUserId(Long wxUserid);
+
+    /**
+     * 变更分销员
+     * @param distribution
+     */
+    void addDistribution(Distribution distribution);
 }

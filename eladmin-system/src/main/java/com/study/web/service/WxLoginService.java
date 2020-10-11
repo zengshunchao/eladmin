@@ -13,13 +13,6 @@ public interface WxLoginService {
     public WxUser wxLogin(WxUserDto wxUserDto);
 
     /**
-     * 变更分销员
-     *
-     * @param wxUserDto
-     */
-    public void updateDistribution(WxUserDto wxUserDto);
-
-    /**
      * 通过ID查询单条数据
      *
      * @param id 主键

@@ -1,5 +1,6 @@
 package com.study.web.service;
 
+import com.study.web.dto.CommissionDto;
 import com.study.web.entity.Commission;
 
 import java.util.List;
@@ -53,4 +54,16 @@ public interface WxCommissionService {
      */
     boolean deleteById(Long id);
 
+    /**
+     * 分页查询数据
+     * @param commissionDto
+     * @return
+     */
+    List<CommissionDto> queryList(CommissionDto commissionDto);
+
+    /**
+     * 总记录数
+     * @return
+     */
+    int totalList(CommissionDto commissionDto);
 }

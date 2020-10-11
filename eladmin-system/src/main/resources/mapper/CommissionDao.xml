@@ -58,6 +58,21 @@
         </where>
     </select>
 
+    <select id="queryList" resultType="com.study.web.dto.CommissionDto">
+        select
+        id, order_id, commission_money, wx_user_id, share_id, lock_time, lock_status
+        from t_commission
+        where wx_user_id = #{wxUserId}
+        order by lock_time desc
+        limit #{startNum}, #{pageSize}
+    </select>
+
+    <select id="totalList" resultType="java.lang.Integer">
+        select count(1)
+        from t_commission
+        where wx_user_id = #{wxUserId}
+    </select>
+
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into t_commission(order_id, commission_money, wx_user_id, share_id, lock_time, lock_status)

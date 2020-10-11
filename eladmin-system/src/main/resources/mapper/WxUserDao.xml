@@ -33,7 +33,7 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="BaseResultSql">
-        id, open_id, session_key, nick_name, gender, wx_language, city, province, country, avatar_url,distribution_flag, parent_id,create_time
+        id, open_id, session_key, nick_name, gender, wx_language, city, province, country, avatar_url,real_name, phone,create_time
     </sql>
     <!--查询单个-->
     <select id="queryById" resultMap="WxUserMap">
@@ -93,11 +93,11 @@
             <if test="avatarUrl != null and avatarUrl != ''">
                 and avatar_url = #{avatarUrl}
             </if>
-            <if test="distributionFlag != null">
-                and distribution_flag = #{distributionFlag}
+            <if test="realName != null">
+                and real_name = #{realName}
             </if>
-            <if test="parentId != null">
-                and parent_id = #{parentId}
+            <if test="phone != null">
+                and phone = #{phone}
             </if>
             <if test="createTime != null">
                 and create_time = #{createTime}
@@ -118,8 +118,8 @@
             <if test="province != null and province != ''">province ,</if>
             <if test="country != null and country != ''">country ,</if>
             <if test="avatarUrl != null and avatarUrl != ''">avatar_url ,</if>
-            <if test="distributionFlag != null">distribution_flag ,</if>
-            <if test="parentId != null">parent_id ,</if>
+            <if test="realName != null">real_name ,</if>
+            <if test="phone != null">phone ,</if>
             <if test="createTime != null">create_time ,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -132,8 +132,8 @@
             <if test="province != null and province != ''">#{province} ,</if>
             <if test="country != null and country != ''">#{country} ,</if>
             <if test="avatarUrl != null and avatarUrl != ''">#{avatarUrl} ,</if>
-            <if test="distributionFlag != null">#{distributionFlag} ,</if>
-            <if test="parentId != null">#{parentId} ,</if>
+            <if test="realName != null">#{realName} ,</if>
+            <if test="phone != null">#{phone} ,</if>
             <if test="createTime != null">#{createTime} ,</if>
         </trim>
     </insert>
@@ -169,11 +169,11 @@
             <if test="avatarUrl != null and avatarUrl != ''">
                 avatar_url = #{avatarUrl},
             </if>
-            <if test="distributionFlag != null">
-                distribution_flag = #{distributionFlag},
+            <if test="realName != null">
+                real_name = #{realName},
             </if>
-            <if test="parentId != null">
-                parent_id = #{parentId},
+            <if test="phone != null">
+                phone = #{phone},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime},
@@ -222,14 +222,11 @@
             <if test="avatarUrl != null and avatarUrl != ''">
                 and avatar_url = #{avatarUrl}
             </if>
-            <if test="distributionFlag != null">
-                and distribution_flag = #{distributionFlag}
+            <if test="realName != null">
+                and real_name = #{realName}
             </if>
-            <if test="parentId != null">
-                and parent_id = #{parentId}
-            </if>
-            <if test="createTime != null">
-                and create_time = #{createTime}
+            <if test="phone != null">
+                and phone = #{phone}
             </if>
         </where>
     </select>

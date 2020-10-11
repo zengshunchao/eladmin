@@ -65,4 +65,5 @@ public interface DistributionDao {
      */
     int deleteById(Long id);
 
+    Distribution queryByWxUserId(Long wxUserid);
 }

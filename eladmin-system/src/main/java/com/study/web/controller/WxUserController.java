@@ -29,7 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/background/wxUser")
 @Slf4j
-public class UserController {
+public class WxUserController {
 
     @Autowired
     private WxUserService wxUserService;

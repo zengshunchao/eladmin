@@ -2,6 +2,7 @@ package com.study.web.entity;
 
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -73,5 +74,16 @@ public class WxUser implements Serializable {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     * 是否分销员
+     */
+    @Transient
+    private Integer distributionFlag;
+    /**
+     * 上级分销员id
+     */
+    @Transient
+    private Long parentId;
 
 }

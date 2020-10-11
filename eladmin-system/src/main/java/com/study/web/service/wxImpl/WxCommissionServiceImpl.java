@@ -1,6 +1,7 @@
 package com.study.web.service.wxImpl;
 
 import com.study.web.dao.CommissionDao;
+import com.study.web.dto.CommissionDto;
 import com.study.web.entity.Commission;
 import com.study.web.service.WxCommissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,25 @@ public class WxCommissionServiceImpl implements WxCommissionService {
     @Override
     public boolean deleteById(Long id) {
         return this.commissionDao.deleteById(id) > 0;
+    }
+
+    /**
+     * 分页查询数据
+     * @param commissionDto
+     * @return
+     */
+    @Override
+    public List<CommissionDto> queryList(CommissionDto commissionDto) {
+        return commissionDao.queryList(commissionDto);
+    }
+
+    /**
+     * 总记录数
+     * @param commissionDto
+     * @return
+     */
+    @Override
+    public int totalList(CommissionDto commissionDto) {
+        return commissionDao.totalList(commissionDto);
     }
 }

@@ -59,4 +59,15 @@ public class WxUserDto {
 
     @Transient
     private String parentName;
+
+    /**
+     * 是否分销员
+     */
+    @Transient
+    private Integer distributionFlag;
+    /**
+     * 上级分销员id
+     */
+    @Transient
+    private Long parentId;
 }
