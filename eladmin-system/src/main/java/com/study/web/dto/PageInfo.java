@@ -9,13 +9,13 @@ import lombok.Data;
 @Data
 public class PageInfo {
     //当前页
-    private int pageNo;
+    private int pageNo = 0;
     //每页的数量
-    private int pageSize;
+    private int pageSize = 0;
     //分页开始记录
-    private int startNum;
+    private int startNum = 0;
 
-    public void setStartNum() {
+    public void setPage() {
         this.startNum = this.pageNo > 0 ? (this.pageNo - 1) * this.pageSize : 0;
     }
 }

@@ -1,4 +1,4 @@
-package com.study.web.entity;
+package com.study.web.dto;
 
 import lombok.Data;
 
@@ -17,7 +17,7 @@ import java.util.Date;
  * @since 2020-10-09 16:10:38
  */
 @Data
-public class Distribution implements Serializable {
+public class DistributionDto extends PageInfo implements Serializable {
     private static final long serialVersionUID = 425981076038169520L;
     /**
      * 表主键

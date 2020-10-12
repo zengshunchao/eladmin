@@ -19,4 +19,11 @@ public interface WxLoginService {
      * @return 实例对象
      */
     public WxUser queryById(Long id);
+
+    /**
+     * 更新用户信息
+     * @param wxUser
+     * @return
+     */
+    WxUser update(WxUser wxUser);
 }

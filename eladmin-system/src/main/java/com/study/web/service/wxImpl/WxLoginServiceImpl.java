@@ -99,4 +99,10 @@ public class WxLoginServiceImpl implements WxLoginService {
     public WxUser queryById(Long id) {
         return wxUserDao.queryById(id);
     }
+
+    @Override
+    public WxUser update(WxUser wxUser) {
+        this.wxUserDao.update(wxUser);
+        return this.queryById(wxUser.getId());
+    }
 }

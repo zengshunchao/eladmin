@@ -1,6 +1,7 @@
 package com.study.web.wxApi;
 
 import com.alibaba.fastjson.JSONObject;
+import com.study.web.dto.DistributionDto;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.WxUser;
 import com.study.web.service.WxLoginService;
@@ -49,32 +50,46 @@ public class WxUserLoginController {
         return jsonObject;
     }
 
-//    @ApiOperation("微信-变更分销员")
-//    @RequestMapping(value = "/updateDistributionFlag", method = RequestMethod.POST)
-//    public Object updateDistributionFlag(@RequestBody WxUserDto wxUserDto, HttpServletRequest request, HttpServletResponse response) {
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            if (wxUserDto.getId() == null || wxUserDto.getDistributionFlag() == null || wxUserDto.getParentId() == null) {
-//                jsonObject.put("code", ResponseCode.BADREQUESTPARAM.getCode());
-//                jsonObject.put("msg", ResponseCode.BADREQUESTPARAM.getMsg());
-//                return jsonObject;
-//            }
-//            // 查询需要修改的数据，不存在直接返回
-//            WxUser user = wxLoginService.queryById(wxUserDto.getId());
-//            if (user == null) {
-//                jsonObject.put("code", ResponseCode.NODATA.getCode());
-//                jsonObject.put("msg", ResponseCode.NODATA.getMsg());
-//                return jsonObject;
-//            }
-//            wxLoginService.updateDistribution(wxUserDto);
-//            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-//            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-//        } catch (Exception e) {
-//            jsonObject.put("code", ResponseCode.FAIL.getCode());
-//            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
-//            log.error("updateDistributionFlag fail {}", e);
-//            return jsonObject;
-//        }
-//        return jsonObject;
-//    }
+    @ApiOperation("微信-更新用户信息")
+    @RequestMapping(value = "updateWxUser", method = RequestMethod.POST)
+    public Object updateWxUser(@RequestBody WxUserDto wxUserDto, HttpServletRequest request, HttpServletResponse response) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            WxUser wxUser = wxLoginService.queryById(wxUserDto.getId());
+            if (null == wxUser) {
+                jsonObject.put("code", ResponseCode.NODATA.getCode());
+                jsonObject.put("msg", ResponseCode.NODATA.getMsg());
+                return jsonObject;
+            }
+            wxUser.setRealName(wxUserDto.getRealName());
+            wxUser.setPhone(wxUserDto.getPhone());
+            wxLoginService.update(wxUser);
+            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
+            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
+        } catch (Exception e) {
+            jsonObject.put("code", ResponseCode.FAIL.getCode());
+            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
+            log.error("wxUserLogin fail {}", e);
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    @ApiOperation("微信-分销员信息")
+    @RequestMapping(value = "getDistributionUser", method = RequestMethod.POST)
+    public Object getDistributionUser(@RequestBody WxUserDto wxUserDto){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            WxUser wxUser = wxLoginService.queryById(wxUserDto.getId());
+            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
+            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
+            jsonObject.put("data", wxUser);
+        } catch (Exception e) {
+            jsonObject.put("code", ResponseCode.FAIL.getCode());
+            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
+            log.error("wxUserLogin fail {}", e);
+            return jsonObject;
+        }
+        return jsonObject;
+    }
 }

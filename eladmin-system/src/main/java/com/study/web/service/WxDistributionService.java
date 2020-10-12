@@ -1,7 +1,9 @@
 package com.study.web.service;
 
+import com.study.web.dto.DistributionDto;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
+import com.study.web.entity.WxUser;
 
 import java.util.List;
 
@@ -62,4 +64,18 @@ public interface WxDistributionService {
      * @param distribution
      */
     void addDistribution(Distribution distribution);
+
+    /**
+     * 下级分销员
+     * @param distributionDto
+     * @return
+     */
+    List<WxUserDto> getDistributionList(DistributionDto distributionDto);
+    /**
+     * 总记录数
+     * @param distributionDto
+     * @return
+     */
+    int totalList(DistributionDto distributionDto);
+
 }

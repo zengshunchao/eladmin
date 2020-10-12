@@ -65,4 +65,5 @@ public interface WalletDao {
      */
     int deleteById(Long id);
 
+    Wallet queryByWxUserId(Long wxUserId);
 }

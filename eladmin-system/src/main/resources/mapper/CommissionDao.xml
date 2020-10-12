@@ -64,7 +64,9 @@
         from t_commission
         where wx_user_id = #{wxUserId}
         order by lock_time desc
-        limit #{startNum}, #{pageSize}
+        <if test="pageSize != 0">
+            limit #{startNum}, #{pageSize}
+        </if>
     </select>
 
     <select id="totalList" resultType="java.lang.Integer">

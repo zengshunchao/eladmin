@@ -1,5 +1,7 @@
 package com.study.web.dao;
 
+import com.study.web.dto.DistributionDto;
+import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -66,4 +68,18 @@ public interface DistributionDao {
     int deleteById(Long id);
 
     Distribution queryByWxUserId(Long wxUserid);
+
+    /**
+     * 下级分销员
+     * @param distributionDto
+     * @return
+     */
+    List<WxUserDto> getDistributionList(DistributionDto distributionDto);
+
+    /**
+     * 总记录数
+     * @param distributionDto
+     * @return
+     */
+    int totalList(DistributionDto distributionDto);
 }

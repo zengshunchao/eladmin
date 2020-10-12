@@ -1,12 +1,18 @@
 package com.study.web.service.wxImpl;
 
 import com.study.web.dao.DistributionDao;
+import com.study.web.dto.DistributionDto;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
+import com.study.web.entity.Wallet;
+import com.study.web.entity.WxUser;
 import com.study.web.service.WxDistributionService;
+import com.study.web.service.WxUserService;
+import com.study.web.service.WxWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -19,6 +25,13 @@ import java.util.List;
 public class WxDistributionServiceImpl implements WxDistributionService {
     @Autowired
     private DistributionDao distributionDao;
+
+
+    @Autowired
+    private WxWalletService wxWalletService;
+
+    @Autowired
+    private WxUserService wxUserService;
 
     /**
      * 通过ID查询单条数据
@@ -92,6 +105,25 @@ public class WxDistributionServiceImpl implements WxDistributionService {
         Distribution temp = distributionDao.queryByWxUserId(distribution.getWxUserId());
         if(null == temp){
             distributionDao.insert(distribution);
+            //添加钱包信息
+            BigDecimal zero = new BigDecimal(0);
+            Wallet wallet = new Wallet(distribution.getWxUserId(),zero,zero,zero,zero);
+            wxWalletService.insert(wallet);
         }
+    }
+
+    /**
+     * 分销员
+     * @param distributionDto
+     * @return
+     */
+    @Override
+    public List<WxUserDto> getDistributionList(DistributionDto distributionDto) {
+        return distributionDao.getDistributionList(distributionDto);
+    }
+
+    @Override
+    public int totalList(DistributionDto distributionDto) {
+        return distributionDao.totalList(distributionDto);
     }
 }

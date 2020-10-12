@@ -53,4 +53,12 @@ public interface WxWalletService {
      */
     boolean deleteById(Long id);
 
+    /**
+     * 通过用户ID查询单条数据
+     *
+     * @param wxUserId 用户主键
+     * @return 实例对象
+     */
+    Wallet queryByWxUserId(Long wxUserId);
+
 }

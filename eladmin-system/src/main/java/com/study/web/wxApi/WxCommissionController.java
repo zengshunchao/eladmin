@@ -39,7 +39,7 @@ public class WxCommissionController {
             return jsonObject;
         }
         try {
-            commissionDto.setStartNum();
+            commissionDto.setPage();
             List<CommissionDto> courseInfoList = new ArrayList<>();
             int total = wxCommissionService.totalList(commissionDto);
             if(total>0){

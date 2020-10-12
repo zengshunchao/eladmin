@@ -44,4 +44,14 @@ public class Wallet implements Serializable {
      */
     private BigDecimal lockMoney;
 
+    public Wallet() {
+    }
+
+    public Wallet(Long wxUserId, BigDecimal allMoney, BigDecimal cashMoney, BigDecimal mayCashMoney, BigDecimal lockMoney) {
+        this.wxUserId = wxUserId;
+        this.allMoney = allMoney;
+        this.cashMoney = cashMoney;
+        this.mayCashMoney = mayCashMoney;
+        this.lockMoney = lockMoney;
+    }
 }

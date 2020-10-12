@@ -1,5 +1,7 @@
 package com.study.web.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -13,6 +15,7 @@ import java.io.Serializable;
  * @author makejava
  * @since 2020-10-09 16:35:20
  */
+@Data
 public class Share implements Serializable {
     private static final long serialVersionUID = -67621330137489654L;
     /**
@@ -27,30 +30,5 @@ public class Share implements Serializable {
      * 分享人id
      */
     private Long shareId;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWxUserId() {
-        return wxUserId;
-    }
-
-    public void setWxUserId(Long wxUserId) {
-        this.wxUserId = wxUserId;
-    }
-
-    public Long getShareId() {
-        return shareId;
-    }
-
-    public void setShareId(Long shareId) {
-        this.shareId = shareId;
-    }
 
 }

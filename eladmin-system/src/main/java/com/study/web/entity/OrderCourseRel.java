@@ -1,5 +1,7 @@
 package com.study.web.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -13,6 +15,7 @@ import java.io.Serializable;
  * @author makejava
  * @since 2020-10-09 22:27:59
  */
+@Data
 public class OrderCourseRel implements Serializable {
     private static final long serialVersionUID = 490320219729654313L;
     /**
@@ -35,46 +38,5 @@ public class OrderCourseRel implements Serializable {
      * 分享人id
      */
     private Long shareId;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
-
-    public Integer getCourseNumber() {
-        return courseNumber;
-    }
-
-    public void setCourseNumber(Integer courseNumber) {
-        this.courseNumber = courseNumber;
-    }
-
-    public Long getShareId() {
-        return shareId;
-    }
-
-    public void setShareId(Long shareId) {
-        this.shareId = shareId;
-    }
 
 }

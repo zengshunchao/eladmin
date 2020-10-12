@@ -155,7 +155,7 @@
                 gender = #{gender},
             </if>
             <if test="wxLanguage != null and wxLanguage != ''">
-                wx_language = #{language},
+                wx_language = #{wxLanguage},
             </if>
             <if test="city != null and city != ''">
                 city = #{city},

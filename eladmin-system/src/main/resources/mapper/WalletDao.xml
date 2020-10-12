@@ -53,6 +53,12 @@
             </if>
         </where>
     </select>
+    <select id="queryByWxUserId" resultMap="WalletMap">
+        select
+          id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
+        from study.t_wallet
+        where wx_user_id = #{wxUserId}
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

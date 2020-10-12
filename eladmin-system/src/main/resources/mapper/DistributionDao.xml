@@ -51,7 +51,24 @@
         from t_distribution
         where wx_user_id = #{wxUserId}
     </select>
-
+    <select id="getDistributionList" resultType="com.study.web.dto.WxUserDto">
+        select twu.real_name realName,twu.phone,twu.avatar_url avatarUrl,td.create_time createTime
+        from t_distribution td
+        inner join t_wx_user twu on td.wx_user_id = twu.id
+        <where>
+            <if test="parentId != null">and td.parent_id = #{parentId}</if>
+        </where>
+        <if test="pageSize != 0">
+            limit #{startNum}, #{pageSize}
+        </if>
+    </select>
+    <select id="totalList" resultType="java.lang.Integer">
+        select count(1)
+        from t_distribution
+        <where>
+            <if test="parentId != null">and td.parent_id = #{parentId}</if>
+        </where>
+    </select>
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into t_distribution(wx_user_id, parent_id, create_time)

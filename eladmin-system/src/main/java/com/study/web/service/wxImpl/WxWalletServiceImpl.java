@@ -76,4 +76,9 @@ public class WxWalletServiceImpl implements WxWalletService {
     public boolean deleteById(Long id) {
         return this.walletDao.deleteById(id) > 0;
     }
+
+    @Override
+    public Wallet queryByWxUserId(Long wxUserId) {
+        return this.walletDao.queryByWxUserId(wxUserId);
+    }
 }
