@@ -1,6 +1,7 @@
 package com.study.web.service;
 
 import com.study.web.dto.OrderDto;
+import com.study.web.dto.OrderInfoDto;
 import com.study.web.entity.Order;
 
 import java.util.List;
@@ -25,10 +26,11 @@ public interface WxOrderService {
     /**
      * 新增数据
      *
-     * @param order 实例对象
-     * @return 实例对象
+     * @param orderInfoDto
+     * @return
+     * @throws Exception
      */
-    Order insert(Order order);
+    void insertOrder(OrderInfoDto orderInfoDto) throws Exception;
 
     /**
      * 修改数据

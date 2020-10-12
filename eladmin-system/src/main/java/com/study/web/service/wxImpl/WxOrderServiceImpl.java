@@ -1,9 +1,12 @@
 package com.study.web.service.wxImpl;
 
+import com.study.utils.CalculateUtil;
+import com.study.utils.OrderCodeUtil;
 import com.study.web.dao.*;
 import com.study.web.dto.CourseInfoDto;
 import com.study.web.dto.OrderCourseRelDto;
 import com.study.web.dto.OrderDto;
+import com.study.web.dto.OrderInfoDto;
 import com.study.web.entity.Order;
 import com.study.web.entity.OrderCourseRel;
 import com.study.web.entity.Picture;
@@ -14,8 +17,11 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,15 +57,44 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
     /**
-     * 新增数据
+     * 统一下单
      *
-     * @param order 实例对象
+     * @param orderInfoDto 实例对象
      * @return 实例对象
      */
     @Override
-    public Order insert(Order order) {
-        orderDao.insert(order);
-        return order;
+    @Transactional(rollbackFor = Exception.class)
+    public void insertOrder(OrderInfoDto orderInfoDto) throws Exception {
+
+        //  获取课程数量，计算金额
+        List<OrderCourseRel> courseNums = orderInfoDto.getCourseNums();
+        Double money = 0d;
+        if (courseNums != null && courseNums.size() != 0) {
+            for (OrderCourseRel orderCourseRel : courseNums) {
+                // 查询课程信息
+                CourseInfoDto course = courseDao.queryById(orderCourseRel.getCourseId());
+                // 计算当前课程的总金额
+                Double totalMoney = CalculateUtil.mul(course.getCourseMoney(), Double.valueOf(orderCourseRel.getCourseNumber()));
+                // 计算所有课程金额总和
+                money = CalculateUtil.add(totalMoney, money);
+            }
+        }
+        if (orderInfoDto.getMoney() == null || orderInfoDto.getMoney().compareTo(BigDecimal.valueOf(money)) != 0) {
+            throw new Exception("订单金额有误");
+        }
+        // 添加订单
+        Order order = new Order();
+        BeanUtils.copyProperties(orderInfoDto, order);
+        order.setStatus(Constants.UNPAID);
+        order.setOrderNumber(OrderCodeUtil.getOrderCode(orderInfoDto.getWxUserId()));
+        order.setCreateTime(new Date());
+        int resultNum = orderDao.insert(order);
+
+        //添加订单中课程绑定关系
+        for (OrderCourseRel courseRel : courseNums) {
+            courseRel.setOrderId(order.getId());
+            orderCourseRelDao.insert(courseRel);
+        }
     }
 
     /**
@@ -165,4 +200,6 @@ public class WxOrderServiceImpl implements WxOrderService {
         }
         return orderDto;
     }
+
+
 }

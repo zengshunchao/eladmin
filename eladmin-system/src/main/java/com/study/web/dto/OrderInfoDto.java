@@ -1,29 +1,18 @@
-package com.study.web.entity;
+package com.study.web.dto;
 
+import com.study.web.entity.OrderCourseRel;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
- * @author zengsc
- * @since 2020-10-09 16:26:20
- */
-
-/**
- * 订单表(Order)实体类
- *
- * @author makejava
- * @since 2020-10-09 16:26:20
+ * 订单详情
  */
 @Data
-public class Order implements Serializable {
-    private static final long serialVersionUID = 239972185784539107L;
-    /**
-     * 表主键
-     */
-    private Long id;
+public class OrderInfoDto {
+
     /**
      * 订单编号
      */
@@ -39,7 +28,7 @@ public class Order implements Serializable {
     /**
      * 订单状态(1-待支付 2-待使用 3-已完成 4-已取消)
      */
-    private Integer status;
+    private Long status;
     /**
      * 备注
      */
@@ -57,8 +46,12 @@ public class Order implements Serializable {
      */
     private Date finishTime;
     /**
-     * 创建时间
+     * 订单创建时间
      */
     private Date createTime;
 
+    /**
+     * 订单课程数量
+     */
+    private List<OrderCourseRel> courseNums;
 }

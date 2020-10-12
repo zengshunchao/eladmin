@@ -28,7 +28,7 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="BaseSql">
-        id, order_number, wx_user_id, money, status, remark, pay_time, auto_check_time, finish_time, create_time
+        id, order_number, wx_user_id, money, `status`, remark, pay_time, auto_check_time, finish_time, create_time
     </sql>
     <!--查询单个-->
     <select id="queryById" resultMap="BaseDtoMap">
@@ -94,15 +94,36 @@
                 and wx_user_id = #{wxUserId}
             </if>
             <if test="status != null">
-                and status = #{status}
+                and `status` = #{status}
             </if>
         </where>
-        order by  create_time desc
+        order by create_time desc
     </select>
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into t_order(order_number, wx_user_id, money, status, remark, pay_time, auto_check_time, finish_time, create_time)
-        values (#{orderNumber}, #{wxUserId}, #{money}, #{status}, #{remark}, #{payTime}, #{autoCheckTime}, #{finishTime}, #{createTime})
+        insert into t_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNumber != null and orderNumber != ''">order_number ,</if>
+            <if test="wxUserId != null">wx_user_id ,</if>
+            <if test="money != null">money ,</if>
+            <if test="status != null">`status` ,</if>
+            <if test="remark != null and remark != ''">remark ,</if>
+            <if test="payTime != null">pay_time ,</if>
+            <if test="autoCheckTime != null">auto_check_time ,</if>
+            <if test="finishTime != null">finish_time ,</if>
+            <if test="createTime != null">create_time ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNumber != null and orderNumber != ''">#{orderNumber} ,</if>
+            <if test="wxUserId != null">#{wxUserId} ,</if>
+            <if test="money != null">#{money} ,</if>
+            <if test="status != null">#{status} ,</if>
+            <if test="remark != null and remark != ''">#{remark} ,</if>
+            <if test="payTime != null">#{payTime} ,</if>
+            <if test="autoCheckTime != null">#{autoCheckTime} ,</if>
+            <if test="finishTime != null">#{finishTime} ,</if>
+            <if test="createTime != null">#{createTime} ,</if>
+        </trim>
     </insert>
 
     <!--通过主键修改数据-->
@@ -119,7 +140,7 @@
                 money = #{money},
             </if>
             <if test="status != null">
-                status = #{status},
+                `status` = #{status},
             </if>
             <if test="remark != null and remark != ''">
                 remark = #{remark},

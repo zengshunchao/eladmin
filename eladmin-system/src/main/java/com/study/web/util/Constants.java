@@ -41,4 +41,24 @@ public class Constants {
      * 授权类型，此处只需填写 authorization_code
      */
     public static final String GRANT_TYPE = "authorization_code";
+
+    /**
+     * 订单状态-待支付
+     */
+    public static final int UNPAID = 1;
+
+    /**
+     * 订单状态-待使用
+     */
+    public static final int UNUSED = 2;
+
+    /**
+     * 订单状态-已完成
+     */
+    public static final int FINISHED = 3;
+
+    /**
+     * 订单状态-已取消
+     */
+    public static final int CANCELED = 4;
 }

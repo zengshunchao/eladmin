@@ -52,8 +52,19 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into t_order_course_rel(order_id, course_id, course_number, share_id)
-        values (#{orderId}, #{courseId}, #{courseNumber}, #{shareId})
+        insert into t_order_course_rel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id ,</if>
+            <if test="courseId != null">course_id ,</if>
+            <if test="courseNumber != null">course_number ,</if>
+            <if test="shareId != null">share_id ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId} ,</if>
+            <if test="courseId != null">#{courseId} ,</if>
+            <if test="courseNumber != null">#{courseNumber} ,</if>
+            <if test="shareId != null">#{shareId} ,</if>
+        </trim>
     </insert>
 
     <!--通过主键修改数据-->

@@ -32,7 +32,7 @@ public class OrderDto {
     /**
      * 订单状态(1-待支付 2-待使用 3-已完成 4-已取消)
      */
-    private Long status;
+    private Integer status;
     /**
      * 备注
      */
