@@ -8,6 +8,7 @@ import com.study.web.dto.ResultValue;
 import com.study.web.entity.Order;
 import com.study.web.entity.Share;
 import com.study.web.service.WxOrderService;
+import com.study.web.util.ParamCheckTool;
 import com.study.web.util.ResponseCode;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单管理
@@ -27,23 +30,32 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/order")
-public class WxOrderController extends JsonResultController{
+public class WxOrderController extends JsonResultController {
 
     @Autowired
     private WxOrderService wxOrderService;
 
-    @ApiOperation("微信-添加订单")
-    @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
-    public ResultValue createOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderInfoDto order) {
+    @ApiOperation("微信-统一下单")
+    @RequestMapping(value = "/unifiedOrder", method = RequestMethod.POST)
+    public ResultValue unifiedOrder(HttpServletRequest request, HttpServletResponse response, OrderInfoDto order) {
+        // 校验参数
+        Map<String, Object> map = new HashMap<>();
+        map.put("wxUserId", order.getWxUserId());
+        map.put("money", order.getMoney());
+        map.put("courseNums", order.getCourseNums());
+        ResultValue resultValue = ParamCheckTool.checkParam(map);
+        if (resultValue != null) {
+            return resultValue;
+        }
         try {
             wxOrderService.insertOrder(order);
             return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
-            log.error("createOrder fail {}", e);
+            log.error("unifiedOrder fail {}", e);
             if ("订单金额有误".equals(e.getMessage())) {
-                return errorResult( ResponseCode.FAIL.getCode(), e.getMessage());
+                return errorResult(ResponseCode.FAIL.getCode(), e.getMessage());
             }
-            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
 
@@ -52,10 +64,10 @@ public class WxOrderController extends JsonResultController{
     public ResultValue getOrderList(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
         try {
             List<OrderDto> orderList = wxOrderService.queryOrdersByStatus(order);
-            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),orderList);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), orderList);
         } catch (Exception e) {
             log.error("getOrderList fail {}", e);
-            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
 
@@ -64,10 +76,10 @@ public class WxOrderController extends JsonResultController{
     public ResultValue getOrderInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
         try {
             OrderDto orderDto = wxOrderService.queryOrderByOrderId(order);
-            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),orderDto);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), orderDto);
         } catch (Exception e) {
             log.error("getOrderInfo fail {}", e);
-            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
 }

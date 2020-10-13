@@ -31,6 +31,16 @@ public class PayHandleConfig extends WXPayConfig {
     }
 
     @Override
+    public int getHttpConnectTimeoutMs() {
+        return 8000;
+    }
+
+    @Override
+    public int getHttpReadTimeoutMs() {
+        return 10000;
+    }
+
+    @Override
     IWXPayDomain getWXPayDomain() {
         return new IWXPayDomain() {
             @Override

@@ -2,6 +2,8 @@ package com.study.web.util;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.study.web.dto.ResultValue;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -15,13 +17,13 @@ public class ParamCheckTool {
      * @param checkParam
      * @return
      */
-    public static JSONObject checkParam(Map<String, String> checkParam) {
-        for (Map.Entry<String, String> e : checkParam.entrySet()) {
+    public static ResultValue checkParam(Map<String, Object> checkParam) {
+        for (Map.Entry<String, Object> e : checkParam.entrySet()) {
             if (StringUtils.isEmpty(e.getValue())) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", ResponseCode.BADREQUESTPARAM.getCode());
-                jsonObject.put("msg", ResponseCode.BADREQUESTPARAM.getMsg() + e.getKey());
-                return jsonObject;
+                ResultValue<T> resultValue = new ResultValue<>();
+                resultValue.setCode(ResponseCode.BADREQUESTPARAM.getCode());
+                resultValue.setMsg(ResponseCode.BADREQUESTPARAM.getMsg() + e.getKey());
+                return resultValue;
             }
         }
         return null;
