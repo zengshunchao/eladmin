@@ -2,6 +2,7 @@ package com.study.web.wxApi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.study.web.dto.DistributionDto;
+import com.study.web.dto.ResultValue;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.WxUser;
 import com.study.web.service.WxLoginService;
@@ -21,75 +22,53 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/user")
-public class WxUserLoginController {
+public class WxUserLoginController extends JsonResultController{
 
     @Autowired
     private WxLoginService wxLoginService;
 
     @ApiOperation("微信-授权登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Object wxUserLogin(@RequestBody WxUserDto wxUserDto, HttpServletRequest request, HttpServletResponse response) {
-
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue wxUserLogin(@RequestBody WxUserDto wxUserDto, HttpServletRequest request, HttpServletResponse response) {
         try {
             WxUser wxUser = wxLoginService.wxLogin(wxUserDto);
             if (wxUser == null) {
-                jsonObject.put("code", ResponseCode.FAIL.getCode());
-                jsonObject.put("msg", "获取微信用户信息失败");
-                return jsonObject;
+                return errorResult( ResponseCode.FAIL.getCode(), "获取微信用户信息失败");
             }
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", wxUser);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),wxUser);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
             log.error("wxUserLogin fail {}", e);
-            return jsonObject;
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 
     @ApiOperation("微信-更新用户信息")
     @RequestMapping(value = "updateWxUser", method = RequestMethod.POST)
-    public Object updateWxUser(@RequestBody WxUserDto wxUserDto, HttpServletRequest request, HttpServletResponse response) {
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue updateWxUser(@RequestBody WxUserDto wxUserDto, HttpServletRequest request, HttpServletResponse response) {
         try {
             WxUser wxUser = wxLoginService.queryById(wxUserDto.getId());
             if (null == wxUser) {
-                jsonObject.put("code", ResponseCode.NODATA.getCode());
-                jsonObject.put("msg", ResponseCode.NODATA.getMsg());
-                return jsonObject;
+                return errorResult( ResponseCode.NODATA.getCode(), ResponseCode.NODATA.getMsg());
             }
             wxUser.setRealName(wxUserDto.getRealName());
             wxUser.setPhone(wxUserDto.getPhone());
             wxLoginService.update(wxUser);
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
+            return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
-            log.error("wxUserLogin fail {}", e);
-            return jsonObject;
+            log.error("updateWxUser fail {}", e);
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 
     @ApiOperation("微信-分销员信息")
     @RequestMapping(value = "getDistributionUser", method = RequestMethod.POST)
-    public Object getDistributionUser(@RequestBody WxUserDto wxUserDto){
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue getDistributionUser(@RequestBody WxUserDto wxUserDto){
         try {
             WxUser wxUser = wxLoginService.queryById(wxUserDto.getId());
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", wxUser);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),wxUser);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
             log.error("wxUserLogin fail {}", e);
-            return jsonObject;
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 }

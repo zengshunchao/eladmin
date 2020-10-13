@@ -1,7 +1,6 @@
 package com.study.web.wxApi;
 
-import com.alibaba.fastjson.JSONObject;
-import com.study.web.dto.CourseInfoDto;
+import com.study.web.dto.ResultValue;
 import com.study.web.entity.Share;
 import com.study.web.service.WxShareService;
 import com.study.web.util.ResponseCode;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * 微信-分享
@@ -23,25 +21,20 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/share")
-public class WxShareController {
+public class WxShareController extends JsonResultController{
 
     @Autowired
     private WxShareService wxShareService;
 
     @ApiOperation("微信-根据微信用户id变更分享人")
     @RequestMapping(value = "/updateShareId", method = RequestMethod.POST)
-    public Object updateShareId(HttpServletRequest request, HttpServletResponse response,@RequestBody Share share) {
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue updateShareId(HttpServletRequest request, HttpServletResponse response, @RequestBody Share share) {
         try {
             wxShareService.update(share);
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
+            return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
             log.error("updateShareId fail {}", e);
-            return jsonObject;
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 }

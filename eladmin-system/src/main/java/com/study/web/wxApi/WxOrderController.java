@@ -4,6 +4,7 @@ package com.study.web.wxApi;
 import com.alibaba.fastjson.JSONObject;
 import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
+import com.study.web.dto.ResultValue;
 import com.study.web.entity.Order;
 import com.study.web.entity.Share;
 import com.study.web.service.WxOrderService;
@@ -26,64 +27,47 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/order")
-public class WxOrderController {
+public class WxOrderController extends JsonResultController{
 
     @Autowired
     private WxOrderService wxOrderService;
 
     @ApiOperation("微信-添加订单")
     @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
-    public Object createOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderInfoDto order) {
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue createOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderInfoDto order) {
         try {
             wxOrderService.insertOrder(order);
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
+            return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
-            if ("订单金额有误".equals(e.getMessage())) {
-                jsonObject.put("msg", e.getMessage());
-            }
             log.error("createOrder fail {}", e);
-            return jsonObject;
+            if ("订单金额有误".equals(e.getMessage())) {
+                return errorResult( ResponseCode.FAIL.getCode(), e.getMessage());
+            }
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 
     @ApiOperation("微信-获取订单列表")
     @RequestMapping(value = "/getOrderList", method = RequestMethod.POST)
-    public Object getOrderList(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue getOrderList(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
         try {
             List<OrderDto> orderList = wxOrderService.queryOrdersByStatus(order);
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", orderList);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),orderList);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
             log.error("getOrderList fail {}", e);
-            return jsonObject;
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 
     @ApiOperation("微信-获取订单详情")
     @RequestMapping(value = "/getOrderInfo", method = RequestMethod.POST)
-    public Object getOrderInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue getOrderInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
         try {
             OrderDto orderDto = wxOrderService.queryOrderByOrderId(order);
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", orderDto);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),orderDto);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
             log.error("getOrderInfo fail {}", e);
-            return jsonObject;
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 }

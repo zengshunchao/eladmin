@@ -1,6 +1,7 @@
 package com.study.web.wxApi;
 
 import com.alibaba.fastjson.JSONObject;
+import com.study.web.dto.ResultValue;
 import com.study.web.entity.Wallet;
 import com.study.web.service.WxWalletService;
 import com.study.web.util.ResponseCode;
@@ -19,25 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/wallet")
-public class WxWalletController {
+public class WxWalletController extends JsonResultController{
     @Autowired
     private WxWalletService wxWalletService;
 
     @ApiOperation("钱包")
     @RequestMapping(value = "getWallet", method = RequestMethod.POST)
-    public Object getWallet(@RequestBody Wallet wallet){
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue getWallet(@RequestBody Wallet wallet){
         try {
             wallet =  wxWalletService.queryByWxUserId(wallet.getWxUserId());
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", wallet);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),wallet);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
-            log.error("wxUserLogin fail {}", e);
-            return jsonObject;
+            log.error("getWallet fail {}", e);
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 }

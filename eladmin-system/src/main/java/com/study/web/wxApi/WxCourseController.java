@@ -2,6 +2,8 @@ package com.study.web.wxApi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.study.web.dto.CourseInfoDto;
+import com.study.web.dto.ResultValue;
+import com.study.web.dto.TableResultValue;
 import com.study.web.service.WxCourseService;
 import com.study.web.util.ResponseCode;
 import io.swagger.annotations.ApiOperation;
@@ -22,50 +24,37 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/course")
-public class WxCourseController {
+public class WxCourseController extends JsonResultController{
 
     @Autowired
     private WxCourseService wxCourseService;
 
     @ApiOperation("微信-获取课程列表")
     @RequestMapping(value = "/getCourseList", method = RequestMethod.GET)
-    public Object getCourseList(HttpServletRequest request, HttpServletResponse response,
-                                @RequestParam(value = "pageNo",defaultValue = "1") int pageNo,
-                                @RequestParam(value = "pageSize",defaultValue = "10")int pageSize) {
+    public TableResultValue getCourseList(HttpServletRequest request, HttpServletResponse response,
+                                          @RequestParam(value = "pageNo",defaultValue = "1") int pageNo,
+                                          @RequestParam(value = "pageSize",defaultValue = "10")int pageSize) {
 
-        JSONObject jsonObject = new JSONObject();
         try {
             List<CourseInfoDto> courseInfoList = wxCourseService.queryList((pageNo - 1) * pageSize, pageSize);
             int total = wxCourseService.totalList();
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", courseInfoList);
-            jsonObject.put("total", total);
+            return tableJsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),total,courseInfoList);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
             log.error("getCourseList fail {}", e);
-            return jsonObject;
+            return errorTableResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 
     @ApiOperation("微信-根据id获取课程详情")
     @RequestMapping(value = "/getCourseInfoById", method = RequestMethod.GET)
-    public Object getCourseInfo(HttpServletRequest request, HttpServletResponse response, Long id) {
-        JSONObject jsonObject = new JSONObject();
+    public ResultValue getCourseInfo(HttpServletRequest request, HttpServletResponse response, Long id) {
         try {
             CourseInfoDto courseInfoDto = wxCourseService.queryCourseById(id);
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", courseInfoDto);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),courseInfoDto);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
             log.error("getCourseInfoById fail {}", e);
-            return jsonObject;
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 
 }

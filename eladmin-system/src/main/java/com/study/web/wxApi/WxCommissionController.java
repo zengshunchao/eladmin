@@ -3,6 +3,7 @@ package com.study.web.wxApi;
 import com.alibaba.fastjson.JSONObject;
 import com.study.utils.StringUtils;
 import com.study.web.dto.CommissionDto;
+import com.study.web.dto.TableResultValue;
 import com.study.web.service.WxCommissionService;
 import com.study.web.util.ResponseCode;
 import io.swagger.annotations.ApiOperation;
@@ -25,18 +26,15 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/commission")
-public class WxCommissionController {
+public class WxCommissionController extends JsonResultController{
     @Autowired
     private WxCommissionService wxCommissionService;
 
     @ApiOperation("微信-获取佣金列表")
     @RequestMapping(value = "/getCommissionList", method = RequestMethod.GET)
-    public Object getCommissionList(HttpServletRequest request, HttpServletResponse response,CommissionDto commissionDto) {
-        JSONObject jsonObject = new JSONObject();
+    public TableResultValue getCommissionList(HttpServletRequest request, HttpServletResponse response, CommissionDto commissionDto) {
         if(null == commissionDto.getWxUserId()){
-            jsonObject.put("code", ResponseCode.BADREQUESTPARAM.getCode());
-            jsonObject.put("msg", ResponseCode.BADREQUESTPARAM.getMsg());
-            return jsonObject;
+            return errorTableResult( ResponseCode.BADREQUESTPARAM.getCode(), ResponseCode.BADREQUESTPARAM.getMsg());
         }
         try {
             commissionDto.setPage();
@@ -45,16 +43,10 @@ public class WxCommissionController {
             if(total>0){
                 courseInfoList = wxCommissionService.queryList(commissionDto);
             }
-            jsonObject.put("code", ResponseCode.SUCCESS.getCode());
-            jsonObject.put("msg", ResponseCode.SUCCESS.getMsg());
-            jsonObject.put("data", courseInfoList);
-            jsonObject.put("total", total);
+            return tableJsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),total,courseInfoList);
         } catch (Exception e) {
-            jsonObject.put("code", ResponseCode.FAIL.getCode());
-            jsonObject.put("msg", ResponseCode.FAIL.getMsg());
-            log.error("getCourseList fail {}", e);
-            return jsonObject;
+            log.error("getCommissionList fail {}", e);
+            return errorTableResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
-        return jsonObject;
     }
 }
