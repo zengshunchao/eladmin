@@ -14,8 +14,20 @@ public class PageInfo {
     private int pageSize = 0;
     //分页开始记录
     private int startNum = 0;
+    //结束条数
+    private int endNum;
+    //数据总页数
+    private int totalPage;
 
     public void setPage() {
-        this.startNum = this.pageNo > 0 ? (this.pageNo - 1) * this.pageSize : 0;
+        int pageNo = this.pageNo;
+        int pageSize = this.getPageSize() == 0 ? 10 : this.getPageSize();
+        this.setPage(pageNo,pageSize);
+    }
+
+    public void setPage(int pageNo,int pageSize) {
+        this.pageNo = pageNo;
+        this.pageSize = pageSize;
+        this.startNum = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
     }
 }

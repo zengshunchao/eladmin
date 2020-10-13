@@ -73,4 +73,13 @@ public class TableResultValue<T> {
                 ", msg='" + msg + '\'' +
                 '}';
     }
+
+    public TableResultValue() {
+    }
+
+    public TableResultValue(ResultValue resultValue) {
+        this.code = resultValue.getCode();
+        this.msg = resultValue.getMsg();
+        this.data = (T)resultValue.getData();
+    }
 }

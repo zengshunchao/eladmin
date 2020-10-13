@@ -1,5 +1,6 @@
 package com.study.web.wxApi;
 
+import com.study.web.dto.PageInfo;
 import com.study.web.dto.ResultValue;
 import com.study.web.dto.TableResultValue;
 
@@ -108,4 +109,9 @@ public class JsonResultController {
         return resultValue;
     }
 
+    protected void setPageInfo(PageInfo model){
+        int pageNo = model.getPageNo();
+        int pageSize = model.getPageSize();
+        model.setPage(pageNo,pageSize);
+    }
 }

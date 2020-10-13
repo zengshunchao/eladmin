@@ -9,18 +9,17 @@ public interface WxCourseService {
     /**
      * 查询所有当前为上架状态的课程
      *
-     * @param pageNo
-     * @param pageSize
+     * @param courseInfoDto
      * @return
      */
-    public List<CourseInfoDto> queryList(int pageNo, int pageSize);
+    List<CourseInfoDto> queryList(CourseInfoDto courseInfoDto);
 
     /**
      * 分页查询统计
      *
      * @return
      */
-    public int totalList();
+    int totalList();
 
     /**
      * 获取课程详情

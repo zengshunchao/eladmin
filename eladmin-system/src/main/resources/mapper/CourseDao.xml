@@ -81,7 +81,10 @@
         <include refid="BaseSql"></include>
         FROM t_course
         where online_time <![CDATA[<=]]> now() and offline_time <![CDATA[>]]> now()
-        order by online_time desc limit #{pageNo},#{pageSize}
+        order by online_time desc
+        <if test="pageSize != 0">
+            limit #{startNum}, #{pageSize}
+        </if>
     </select>
 
     <select id="wxQueryCourseListTotal" resultType="java.lang.Integer">

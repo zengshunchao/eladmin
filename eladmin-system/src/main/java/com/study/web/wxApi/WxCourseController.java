@@ -9,10 +9,7 @@ import com.study.web.util.ResponseCode;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,13 +27,12 @@ public class WxCourseController extends JsonResultController{
     private WxCourseService wxCourseService;
 
     @ApiOperation("微信-获取课程列表")
-    @RequestMapping(value = "/getCourseList", method = RequestMethod.GET)
-    public TableResultValue getCourseList(HttpServletRequest request, HttpServletResponse response,
-                                          @RequestParam(value = "pageNo",defaultValue = "1") int pageNo,
-                                          @RequestParam(value = "pageSize",defaultValue = "10")int pageSize) {
+    @RequestMapping(value = "/getCourseList", method = RequestMethod.POST)
+    public TableResultValue getCourseList(HttpServletRequest request, HttpServletResponse response, @RequestBody CourseInfoDto courseInfoDto) {
 
         try {
-            List<CourseInfoDto> courseInfoList = wxCourseService.queryList((pageNo - 1) * pageSize, pageSize);
+            setPageInfo(courseInfoDto);
+            List<CourseInfoDto> courseInfoList = wxCourseService.queryList(courseInfoDto);
             int total = wxCourseService.totalList();
             return tableJsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),total,courseInfoList);
         } catch (Exception e) {

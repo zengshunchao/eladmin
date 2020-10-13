@@ -1,18 +1,15 @@
 package com.study.web.wxApi;
 
-import com.alibaba.fastjson.JSONObject;
-import com.study.utils.StringUtils;
 import com.study.web.dto.CommissionDto;
+import com.study.web.dto.ResultValue;
 import com.study.web.dto.TableResultValue;
 import com.study.web.service.WxCommissionService;
+import com.study.web.util.ParamCheckTool;
 import com.study.web.util.ResponseCode;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,12 +29,15 @@ public class WxCommissionController extends JsonResultController{
 
     @ApiOperation("微信-获取佣金列表")
     @RequestMapping(value = "/getCommissionList", method = RequestMethod.GET)
-    public TableResultValue getCommissionList(HttpServletRequest request, HttpServletResponse response, CommissionDto commissionDto) {
-        if(null == commissionDto.getWxUserId()){
-            return errorTableResult( ResponseCode.BADREQUESTPARAM.getCode(), ResponseCode.BADREQUESTPARAM.getMsg());
+    public TableResultValue getCommissionList(HttpServletRequest request, HttpServletResponse response,@RequestBody CommissionDto commissionDto) {
+        List<String> params = new ArrayList<>();
+        params.add("wxUserId");
+        ResultValue resultValue = ParamCheckTool.checkParam(params, commissionDto);
+        if (resultValue != null) {
+            return new TableResultValue(resultValue);
         }
         try {
-            commissionDto.setPage();
+            setPageInfo(commissionDto);
             List<CommissionDto> courseInfoList = new ArrayList<>();
             int total = wxCommissionService.totalList(commissionDto);
             if(total>0){

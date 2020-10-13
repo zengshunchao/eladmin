@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class CourseInfoDto {
+public class CourseInfoDto  extends PageInfo {
 
     /**
      * 课程表主键

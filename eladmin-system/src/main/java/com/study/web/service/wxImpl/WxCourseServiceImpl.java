@@ -21,11 +21,11 @@ public class WxCourseServiceImpl implements WxCourseService {
     private PictureDao pictureDao;
 
     @Override
-    public List<CourseInfoDto> queryList(int pageNo, int pageSize) {
+    public List<CourseInfoDto> queryList(CourseInfoDto courseInfoDto) {
 
         List<CourseInfoDto> courseList = null;
         // 查询所有为上架状态的课程
-        courseList = courseDao.wxQueryCourseList(pageNo, pageSize);
+        courseList = courseDao.wxQueryCourseList(courseInfoDto);
 
         if (courseList != null && courseList.size() != 0) {
             for (CourseInfoDto info : courseList) {

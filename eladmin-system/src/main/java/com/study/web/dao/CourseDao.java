@@ -68,11 +68,10 @@ public interface CourseDao {
     /**
      * 微信-获取上架状态的课程
      *
-     * @param pageNo
-     * @param pageSize
+     * @param courseInfoDto
      * @return
      */
-    List<CourseInfoDto> wxQueryCourseList(@Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
+    List<CourseInfoDto> wxQueryCourseList(CourseInfoDto courseInfoDto);
 
     /**
      * 查询全部上架课程数

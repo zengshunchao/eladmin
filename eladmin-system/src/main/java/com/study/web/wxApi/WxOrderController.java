@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +38,13 @@ public class WxOrderController extends JsonResultController {
 
     @ApiOperation("微信-统一下单")
     @RequestMapping(value = "/unifiedOrder", method = RequestMethod.POST)
-    public ResultValue unifiedOrder(HttpServletRequest request, HttpServletResponse response, OrderInfoDto order) {
+    public ResultValue unifiedOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderInfoDto order) {
         // 校验参数
-        Map<String, Object> map = new HashMap<>();
-        map.put("wxUserId", order.getWxUserId());
-        map.put("money", order.getMoney());
-        map.put("courseNums", order.getCourseNums());
-        ResultValue resultValue = ParamCheckTool.checkParam(map);
+        List<String> params = new ArrayList<>();
+        params.add("wxUserId");
+        params.add("money");
+        params.add("courseNums");
+        ResultValue resultValue = ParamCheckTool.checkParam(params,order);
         if (resultValue != null) {
             return resultValue;
         }
