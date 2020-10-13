@@ -86,4 +86,8 @@ public class WxUser implements Serializable {
     @Transient
     private Long parentId;
 
+    //分享人id
+    @Transient
+    private Long shareId;
+
 }

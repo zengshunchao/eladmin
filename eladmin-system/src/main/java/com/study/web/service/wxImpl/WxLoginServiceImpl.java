@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.study.web.dao.WxUserDao;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
+import com.study.web.entity.Share;
 import com.study.web.entity.WxUser;
 import com.study.web.service.WxDistributionService;
 import com.study.web.service.WxLoginService;
+import com.study.web.service.WxShareService;
 import com.study.web.util.Constants;
 import com.study.web.util.OkHttpRequestUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,9 @@ public class WxLoginServiceImpl implements WxLoginService {
 
     @Autowired
     private WxDistributionService wxDistributionService;
+
+    @Autowired
+    private WxShareService wxShareService;
 
     @Override
     public WxUser wxLogin(WxUserDto wxUserDto) {
@@ -91,7 +96,14 @@ public class WxLoginServiceImpl implements WxLoginService {
             if(null != distribution){
                 wxUser.setDistributionFlag(1);
                 wxUser.setParentId(distribution.getParentId());
+                wxUser.setShareId(wxUser.getId());
+            }else {
+                Share share = wxShareService.queryById(wxUser.getId());
+                if(null != share){
+                    wxUser.setShareId(share.getShareId());
+                }
             }
+
         }
     }
 
