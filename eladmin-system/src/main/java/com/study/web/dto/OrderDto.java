@@ -1,5 +1,6 @@
 package com.study.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Transient;
@@ -50,6 +51,7 @@ public class OrderDto {
     /**
      * 支付时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date payTime;
     /**
      * 系统自动核销时间
@@ -58,10 +60,12 @@ public class OrderDto {
     /**
      * 订单完成时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date finishTime;
     /**
      * 订单创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**

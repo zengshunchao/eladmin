@@ -2,6 +2,7 @@ package com.study.web.wxApi;
 
 import com.study.web.dto.DistributionDto;
 import com.study.web.dto.ResultValue;
+import com.study.web.dto.TableResultValue;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
 import com.study.web.service.WxDistributionService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,13 +43,18 @@ public class WxDistributionController extends JsonResultController {
 
     @ApiOperation("下级分销员")
     @RequestMapping(value = "getDistributionList", method = RequestMethod.POST)
-    public ResultValue getDistributionList(@RequestBody DistributionDto distributionDto){
+    public TableResultValue getDistributionList(@RequestBody DistributionDto distributionDto){
         try {
-            List<WxUserDto> wxUserDtoList = wxDistributionService.getDistributionList(distributionDto);
-            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),wxUserDtoList);
+            setPageInfo(distributionDto);
+            List<WxUserDto> wxUserDtoList = new ArrayList<>();
+            int total = wxDistributionService.totalList(distributionDto);
+            if(total>0){
+                wxUserDtoList = wxDistributionService.getDistributionList(distributionDto);
+            }
+            return tableJsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),total,wxUserDtoList);
         } catch (Exception e) {
             log.error("getDistributionList fail {}", e);
-            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+            return errorTableResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
 }

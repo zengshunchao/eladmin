@@ -27,9 +27,8 @@ public class WxCourseController extends JsonResultController{
     private WxCourseService wxCourseService;
 
     @ApiOperation("微信-获取课程列表")
-    @RequestMapping(value = "/getCourseList", method = RequestMethod.POST)
-    public TableResultValue getCourseList(HttpServletRequest request, HttpServletResponse response, @RequestBody CourseInfoDto courseInfoDto) {
-
+    @RequestMapping(value = "/getCourseList", method = RequestMethod.GET)
+    public TableResultValue getCourseList(HttpServletRequest request, HttpServletResponse response,  CourseInfoDto courseInfoDto) {
         try {
             setPageInfo(courseInfoDto);
             List<CourseInfoDto> courseInfoList = wxCourseService.queryList(courseInfoDto);

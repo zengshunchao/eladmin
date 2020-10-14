@@ -43,7 +43,7 @@ public class WxOrderController extends JsonResultController {
 
     @ApiOperation("微信-统一下单")
     @RequestMapping(value = "/unifiedOrder", method = RequestMethod.POST)
-    public ResultValue unifiedOrder(HttpServletRequest request, HttpServletResponse response, OrderInfoDto order) {
+    public ResultValue unifiedOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderInfoDto order) {
         try {
             Map<String, String> resultMap = wxOrderService.insertOrder(request, order);
             // 返回为空则下单失败
