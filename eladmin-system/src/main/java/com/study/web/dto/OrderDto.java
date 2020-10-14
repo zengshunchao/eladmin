@@ -33,6 +33,16 @@ public class OrderDto {
      * 订单状态(1-待支付 2-待使用 3-已完成 4-已取消)
      */
     private Integer status;
+
+    /**
+     * 订单用户姓名
+     */
+    private String orderUserName;
+
+    /**
+     * 订单联系电话
+     */
+    private String orderPhone;
     /**
      * 备注
      */
@@ -53,6 +63,11 @@ public class OrderDto {
      * 订单创建时间
      */
     private Date createTime;
+
+    /**
+     * 商户订单号
+     */
+    private String outTradeNo;
 
     /**
      * 课程列表

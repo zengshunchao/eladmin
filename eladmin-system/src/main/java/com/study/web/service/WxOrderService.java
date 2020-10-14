@@ -4,7 +4,9 @@ import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
 import com.study.web.entity.Order;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单表(Order)表服务接口
@@ -27,10 +29,11 @@ public interface WxOrderService {
      * 新增数据
      *
      * @param orderInfoDto
+     * @param request
      * @return
      * @throws Exception
      */
-    void insertOrder(OrderInfoDto orderInfoDto) throws Exception;
+    Map<String, String> insertOrder(HttpServletRequest request, OrderInfoDto orderInfoDto) throws Exception;
 
     /**
      * 修改数据
@@ -63,4 +66,12 @@ public interface WxOrderService {
      * @return
      */
     OrderDto queryOrderByOrderId(Order order);
+
+    /**
+     * 根据商户订单号查询订单信息
+     *
+     * @param outTradeNo
+     * @return
+     */
+    Order queryOrderByOutTradeNo(String outTradeNo);
 }

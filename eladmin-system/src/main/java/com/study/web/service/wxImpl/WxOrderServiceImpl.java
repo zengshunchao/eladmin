@@ -13,16 +13,19 @@ import com.study.web.entity.Picture;
 import com.study.web.entity.WxUser;
 import com.study.web.service.WxOrderService;
 import com.study.web.util.Constants;
+import com.study.web.wxPaySdk.WXPayUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单表(Order)表服务实现类
@@ -42,7 +45,8 @@ public class WxOrderServiceImpl implements WxOrderService {
     private PictureDao pictureDao;
     @Autowired
     private WxUserDao wxUserDao;
-
+    @Autowired
+    private WxPayService wxPayService;
 
     /**
      * 查询多条数据
@@ -64,7 +68,31 @@ public class WxOrderServiceImpl implements WxOrderService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertOrder(OrderInfoDto orderInfoDto) throws Exception {
+    public Map<String, String> insertOrder(HttpServletRequest request, OrderInfoDto orderInfoDto) throws Exception {
+
+        Map<String, String> map = null;
+        // 商户订单号
+        String out_trade_no = WXPayUtil.generateNonceStr();
+        // 判断是否是新订单
+        if (orderInfoDto.getId() != null) {
+            OrderDto orderDto = orderDao.queryById(orderInfoDto.getId());
+            if (orderDto != null) {
+                if (Constants.UNPAID != orderDto.getStatus()) {
+                    throw new Exception("未查询到待支付订单");
+                }
+                Order order = new Order();
+                order.setId(orderInfoDto.getId());
+                order.setOutTradeNo(out_trade_no);
+                orderDao.update(order);
+
+                // 调用统一下单接口
+                order.setWxUserId(orderDto.getWxUserId());
+                order.setMoney(orderDto.getMoney());
+                map = wxPayService.unifiedOrder(request, order);
+                return map;
+            }
+
+        }
 
         //  获取课程数量，计算金额
         List<OrderCourseRel> courseNums = orderInfoDto.getCourseNums();
@@ -86,6 +114,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         Order order = new Order();
         BeanUtils.copyProperties(orderInfoDto, order);
         order.setStatus(Constants.UNPAID);
+        order.setOutTradeNo(out_trade_no);
         order.setOrderNumber(OrderCodeUtil.getOrderCode(orderInfoDto.getWxUserId()));
         order.setCreateTime(new Date());
         int resultNum = orderDao.insert(order);
@@ -95,6 +124,11 @@ public class WxOrderServiceImpl implements WxOrderService {
             courseRel.setOrderId(order.getId());
             orderCourseRelDao.insert(courseRel);
         }
+        // 本地添加成功就调用微信统一下单接口
+        if (resultNum != 0) {
+            map = wxPayService.unifiedOrder(request, order);
+        }
+        return map;
     }
 
     /**
@@ -201,5 +235,8 @@ public class WxOrderServiceImpl implements WxOrderService {
         return orderDto;
     }
 
-
+    @Override
+    public Order queryOrderByOutTradeNo(String outTradeNo) {
+        return orderDao.queryOrderByOutTradeNo(outTradeNo);
+    }
 }

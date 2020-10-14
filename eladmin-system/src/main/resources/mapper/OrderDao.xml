@@ -8,11 +8,14 @@
         <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
         <result property="money" column="money" jdbcType="DECIMAL"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="orderUserName" column="order_user_name" jdbcType="VARCHAR"/>
+        <result property="orderPhone" column="order_phone" jdbcType="VARCHAR"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
         <result property="autoCheckTime" column="auto_check_time" jdbcType="TIMESTAMP"/>
         <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.study.web.dto.OrderDto" id="BaseDtoMap">
@@ -21,14 +24,17 @@
         <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
         <result property="money" column="money" jdbcType="DECIMAL"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="orderUserName" column="order_user_name" jdbcType="VARCHAR"/>
+        <result property="orderPhone" column="order_phone" jdbcType="VARCHAR"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
         <result property="autoCheckTime" column="auto_check_time" jdbcType="TIMESTAMP"/>
         <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="BaseSql">
-        id, order_number, wx_user_id, money, `status`, remark, pay_time, auto_check_time, finish_time, create_time
+        id, order_number, wx_user_id, money, `status`,order_user_name,order_phone, remark, pay_time, auto_check_time, finish_time, create_time,out_trade_no
     </sql>
     <!--查询单个-->
     <select id="queryById" resultMap="BaseDtoMap">
@@ -107,22 +113,28 @@
             <if test="wxUserId != null">wx_user_id ,</if>
             <if test="money != null">money ,</if>
             <if test="status != null">`status` ,</if>
+            <if test="orderUserName != null and orderUserName != ''">order_user_name ,</if>
+            <if test="orderPhone != null and orderPhone != ''">order_phone ,</if>
             <if test="remark != null and remark != ''">remark ,</if>
             <if test="payTime != null">pay_time ,</if>
             <if test="autoCheckTime != null">auto_check_time ,</if>
             <if test="finishTime != null">finish_time ,</if>
             <if test="createTime != null">create_time ,</if>
+            <if test="outTradeNo != null and outTradeNo != ''">out_trade_no ,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNumber != null and orderNumber != ''">#{orderNumber} ,</if>
             <if test="wxUserId != null">#{wxUserId} ,</if>
             <if test="money != null">#{money} ,</if>
             <if test="status != null">#{status} ,</if>
+            <if test="orderUserName != null and orderUserName != ''">#{orderUserName} ,</if>
+            <if test="orderPhone != null and orderPhone != ''">#{orderPhone} ,</if>
             <if test="remark != null and remark != ''">#{remark} ,</if>
             <if test="payTime != null">#{payTime} ,</if>
             <if test="autoCheckTime != null">#{autoCheckTime} ,</if>
             <if test="finishTime != null">#{finishTime} ,</if>
             <if test="createTime != null">#{createTime} ,</if>
+            <if test="outTradeNo != null and outTradeNo != ''">#{outTradeNo} ,</if>
         </trim>
     </insert>
 
@@ -157,6 +169,9 @@
             <if test="createTime != null">
                 create_time = #{createTime},
             </if>
+            <if test="outTradeNo != null and outTradeNo != ''">
+                out_trade_no = #{outTradeNo},
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -166,4 +181,10 @@
         delete from t_order where id = #{id}
     </delete>
 
+    <select id="queryOrderByOutTradeNo" resultMap="OrderMap">
+        select
+        <include refid="BaseSql"></include>
+        from t_order
+        where out_trade_no = #{outTradeNo}
+    </select>
 </mapper>

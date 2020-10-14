@@ -74,4 +74,11 @@ public interface OrderDao {
      */
     int deleteById(Long id);
 
+    /**
+     * 根据商户订单号查询订单
+     *
+     * @param outTradeNo
+     * @return
+     */
+    Order queryOrderByOutTradeNo(@Param("outTradeNo") String outTradeNo);
 }

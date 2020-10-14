@@ -40,6 +40,16 @@ public class Order implements Serializable {
      * 订单状态(1-待支付 2-待使用 3-已完成 4-已取消)
      */
     private Integer status;
+
+    /**
+     * 订单用户名
+     */
+    private String orderUserName;
+
+    /**
+     * 订单联系电话
+     */
+    private String orderPhone;
     /**
      * 备注
      */
@@ -60,5 +70,10 @@ public class Order implements Serializable {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     * 商户订单号
+     */
+    private String outTradeNo;
 
 }

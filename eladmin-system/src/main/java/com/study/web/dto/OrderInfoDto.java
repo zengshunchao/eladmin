@@ -14,6 +14,10 @@ import java.util.List;
 public class OrderInfoDto {
 
     /**
+     * 订单id
+     */
+    private Long id;
+    /**
      * 订单编号
      */
     private String orderNumber;
