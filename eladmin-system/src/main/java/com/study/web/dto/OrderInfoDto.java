@@ -33,6 +33,16 @@ public class OrderInfoDto {
      * 订单状态(1-待支付 2-待使用 3-已完成 4-已取消)
      */
     private Long status;
+
+    /**
+     *  下单姓名
+     */
+    private String orderUserName;
+
+    /**
+     *  下单电话
+     */
+    private String orderPhone;
     /**
      * 备注
      */
