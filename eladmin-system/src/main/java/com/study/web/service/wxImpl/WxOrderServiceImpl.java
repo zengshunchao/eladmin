@@ -115,7 +115,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         BeanUtils.copyProperties(orderInfoDto, order);
         order.setStatus(Constants.UNPAID);
         order.setOutTradeNo(out_trade_no);
-        order.setOrderNumber(OrderCodeUtil.getOrderCode(orderInfoDto.getWxUserId()));
+        order.setOrderNumber(OrderCodeUtil.getOrderCodeV2(orderInfoDto.getWxUserId()));
         order.setCreateTime(new Date());
         int resultNum = orderDao.insert(order);
 

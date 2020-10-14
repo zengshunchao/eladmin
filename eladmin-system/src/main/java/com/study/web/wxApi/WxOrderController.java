@@ -2,6 +2,7 @@ package com.study.web.wxApi;
 
 
 import com.study.config.WxConfig;
+import com.study.utils.OrderCodeUtil;
 import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
 import com.study.web.dto.ResultValue;
@@ -122,7 +123,7 @@ public class WxOrderController extends JsonResultController {
                         String total_fee = map.get("total_fee");
                         BigDecimal totalMoney = new BigDecimal(total_fee);
                         // 金额相等则修改订单状态
-                        if (order.getMoney().compareTo(totalMoney) == 0) {
+                        if (order.getMoney().multiply(BigDecimal.valueOf(100)).compareTo(totalMoney) == 0) {
                             // 获取支付完成时间
                             String time_end = map.get("time_end");
                             Date payTime = TimeUtil.stringToDate(time_end, "yyyyMMddHHmmss");
@@ -131,6 +132,7 @@ public class WxOrderController extends JsonResultController {
                             // 状态修改为待使用
                             updateOrder.setStatus(Constants.UNUSED);
                             updateOrder.setPayTime(payTime);
+                            updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
                             wxOrderService.update(order);
                         }
                         resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"

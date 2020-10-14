@@ -16,6 +16,7 @@
         <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
+        <result property="checkCode" column="check_code" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.study.web.dto.OrderDto" id="BaseDtoMap">
@@ -32,9 +33,10 @@
         <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
+        <result property="checkCode" column="check_code" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="BaseSql">
-        id, order_number, wx_user_id, money, `status`,order_user_name,order_phone, remark, pay_time, auto_check_time, finish_time, create_time,out_trade_no
+        id, order_number, wx_user_id, money, `status`,order_user_name,order_phone, remark, pay_time, auto_check_time, finish_time, create_time,out_trade_no,check_code
     </sql>
     <!--查询单个-->
     <select id="queryById" resultMap="BaseDtoMap">
@@ -121,6 +123,7 @@
             <if test="finishTime != null">finish_time ,</if>
             <if test="createTime != null">create_time ,</if>
             <if test="outTradeNo != null and outTradeNo != ''">out_trade_no ,</if>
+            <if test="checkCode != null and checkCode != ''">check_code ,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNumber != null and orderNumber != ''">#{orderNumber} ,</if>
@@ -135,6 +138,7 @@
             <if test="finishTime != null">#{finishTime} ,</if>
             <if test="createTime != null">#{createTime} ,</if>
             <if test="outTradeNo != null and outTradeNo != ''">#{outTradeNo} ,</if>
+            <if test="checkCode != null and checkCode != ''">#{checkCode} ,</if>
         </trim>
     </insert>
 
@@ -171,6 +175,9 @@
             </if>
             <if test="outTradeNo != null and outTradeNo != ''">
                 out_trade_no = #{outTradeNo},
+            </if>
+            <if test="checkCode != null and checkCode != ''">
+                check_code = #{checkCode},
             </if>
         </set>
         where id = #{id}

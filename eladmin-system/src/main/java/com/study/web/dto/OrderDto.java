@@ -84,4 +84,9 @@ public class OrderDto {
 
     @Transient
     private String phone;
+
+    /**
+     * 订单核销码
+     */
+    private String checkCode;
 }

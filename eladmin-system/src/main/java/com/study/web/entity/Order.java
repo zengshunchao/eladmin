@@ -76,4 +76,8 @@ public class Order implements Serializable {
      */
     private String outTradeNo;
 
+    /**
+     *  订单核销码
+     */
+    private String checkCode;
 }

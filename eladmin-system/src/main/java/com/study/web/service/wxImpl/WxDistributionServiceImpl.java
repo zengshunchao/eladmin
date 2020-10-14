@@ -11,6 +11,7 @@ import com.study.web.service.WxUserService;
 import com.study.web.service.WxWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -98,22 +99,25 @@ public class WxDistributionServiceImpl implements WxDistributionService {
 
     /**
      * 变更分销员
+     *
      * @param distribution
      */
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public void addDistribution(Distribution distribution) {
         Distribution temp = distributionDao.queryByWxUserId(distribution.getWxUserId());
-        if(null == temp){
+        if (null == temp) {
             distributionDao.insert(distribution);
             //添加钱包信息
             BigDecimal zero = new BigDecimal(0);
-            Wallet wallet = new Wallet(distribution.getWxUserId(),zero,zero,zero,zero);
+            Wallet wallet = new Wallet(distribution.getWxUserId(), zero, zero, zero, zero);
             wxWalletService.insert(wallet);
         }
     }
 
     /**
      * 分销员
+     *
      * @param distributionDto
      * @return
      */
