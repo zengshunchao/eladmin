@@ -5,6 +5,7 @@ import com.study.web.entity.Wallet;
 import com.study.web.service.WxWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class WxWalletServiceImpl implements WxWalletService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Wallet insert(Wallet wallet) {
         this.walletDao.insert(wallet);
         return wallet;
@@ -61,6 +63,7 @@ public class WxWalletServiceImpl implements WxWalletService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Wallet update(Wallet wallet) {
         this.walletDao.update(wallet);
         return this.queryById(wallet.getId());
@@ -73,6 +76,7 @@ public class WxWalletServiceImpl implements WxWalletService {
      * @return 是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Long id) {
         return this.walletDao.deleteById(id) > 0;
     }

@@ -1,5 +1,9 @@
 server:
   port: 8000
+  ssl:
+    key-store: classpath:tomuchlove.xyz.jks
+    key-store-password: tomuchlove
+    key-store-type: JKS
 
 spring:
   freemarker:

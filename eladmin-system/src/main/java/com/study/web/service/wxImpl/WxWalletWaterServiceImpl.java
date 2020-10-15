@@ -5,6 +5,7 @@ import com.study.web.entity.WalletWater;
 import com.study.web.service.WxWalletWaterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class WxWalletWaterServiceImpl implements WxWalletWaterService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public WalletWater insert(WalletWater walletWater) {
         this.walletWaterDao.insert(walletWater);
         return walletWater;
@@ -61,6 +63,7 @@ public class WxWalletWaterServiceImpl implements WxWalletWaterService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public WalletWater update(WalletWater walletWater) {
         this.walletWaterDao.update(walletWater);
         return this.queryById(walletWater.getId());
@@ -73,6 +76,7 @@ public class WxWalletWaterServiceImpl implements WxWalletWaterService {
      * @return 是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Long id) {
         return this.walletWaterDao.deleteById(id) > 0;
     }

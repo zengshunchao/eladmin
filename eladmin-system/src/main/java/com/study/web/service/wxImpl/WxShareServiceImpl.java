@@ -5,6 +5,7 @@ import com.study.web.entity.Share;
 import com.study.web.service.WxShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class WxShareServiceImpl implements WxShareService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Share insert(Share share) {
         shareDao.insert(share);
         return share;
@@ -61,6 +63,7 @@ public class WxShareServiceImpl implements WxShareService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(Share share) {
         // 查询是否已经存在该微信用户分享关系记录
         Share queryShare = shareDao.queryById(share.getWxUserId());
@@ -79,6 +82,7 @@ public class WxShareServiceImpl implements WxShareService {
      * @return 是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Long id) {
         return shareDao.deleteById(id) > 0;
     }

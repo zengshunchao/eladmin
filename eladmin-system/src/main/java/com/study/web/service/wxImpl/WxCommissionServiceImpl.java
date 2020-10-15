@@ -6,6 +6,7 @@ import com.study.web.entity.Commission;
 import com.study.web.service.WxCommissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class WxCommissionServiceImpl implements WxCommissionService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Commission insert(Commission commission) {
         this.commissionDao.insert(commission);
         return commission;
@@ -62,6 +64,7 @@ public class WxCommissionServiceImpl implements WxCommissionService {
      * @return 实例对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Commission update(Commission commission) {
         this.commissionDao.update(commission);
         return this.queryById(commission.getId());
@@ -74,6 +77,7 @@ public class WxCommissionServiceImpl implements WxCommissionService {
      * @return 是否成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Long id) {
         return this.commissionDao.deleteById(id) > 0;
     }
