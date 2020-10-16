@@ -3,6 +3,7 @@ package com.study.web.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -27,6 +28,14 @@ public class WalletWater implements Serializable {
      * 用户id
      */
     private Long wxUserId;
+    /**
+     * 金额
+     */
+    private BigDecimal money;
+    /**
+     * 1收入 2支出 3其他
+     */
+    private Integer type;
     /**
      * 流水备注
      */
