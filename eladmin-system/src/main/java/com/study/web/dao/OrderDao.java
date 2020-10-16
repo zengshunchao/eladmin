@@ -1,5 +1,7 @@
 package com.study.web.dao;
 
+import com.study.web.dto.BackGroundOrderInfoDto;
+import com.study.web.dto.BackGroundOrderQueryDto;
 import com.study.web.dto.OrderDto;
 import com.study.web.entity.Order;
 import org.apache.ibatis.annotations.Param;
@@ -81,4 +83,31 @@ public interface OrderDao {
      * @return
      */
     Order queryOrderByOutTradeNo(@Param("outTradeNo") String outTradeNo);
+
+    /**
+     * 后台-订单查询
+     *
+     * @param order
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    List<BackGroundOrderInfoDto> queryOrderLimit(BackGroundOrderQueryDto order, int pageNo, int pageSize);
+
+    /**
+     * 统计订单
+     *
+     * @param order
+     * @return
+     */
+    int totalOrder(BackGroundOrderQueryDto order);
+
+
+    /**
+     * 根据订单id查询订单详情
+     *
+     * @param id
+     * @return
+     */
+    BackGroundOrderInfoDto queryOrderInfoById(Long id);
 }

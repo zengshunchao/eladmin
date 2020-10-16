@@ -35,6 +35,24 @@
         <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
         <result property="checkCode" column="check_code" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <resultMap type="com.study.web.dto.BackGroundOrderInfoDto" id="BackGroundBaseDtoMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderNumber" column="order_number" jdbcType="VARCHAR"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="money" column="money" jdbcType="DECIMAL"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="orderUserName" column="order_user_name" jdbcType="VARCHAR"/>
+        <result property="orderPhone" column="order_phone" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="autoCheckTime" column="auto_check_time" jdbcType="TIMESTAMP"/>
+        <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
+        <result property="checkCode" column="check_code" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+    </resultMap>
     <sql id="BaseSql">
         id, order_number, wx_user_id, money, `status`,order_user_name,order_phone, remark, pay_time, auto_check_time, finish_time, create_time,out_trade_no,check_code
     </sql>
@@ -193,5 +211,44 @@
         <include refid="BaseSql"></include>
         from t_order
         where out_trade_no = #{outTradeNo}
+    </select>
+
+    <select id="queryOrderLimit" resultMap="BackGroundBaseDtoMap">
+        select
+        t1.id, t1.order_number, t1.wx_user_id, t1.money, t1.`status`, t1.order_user_name, t1.order_phone,
+        t1.remark, t1.pay_time,t1.auto_check_time, t1.finish_time, t1.create_time, t1.out_trade_no,t1.check_code,
+        t2.nick_name
+        from t_order t1 left join t_wx_user t2 on t1.wx_user_id = t2.id
+        <where>
+            <if test="status != null">
+                and `status` = #{status}
+            </if>
+            <if test="createTime != null and endTime != null">
+                and create_time between #{createTime} and #{endTime}
+            </if>
+        </where>
+        order by t1.create_time desc
+        limit #{pageNo},#{#pageSize}
+    </select>
+
+    <select id="totalOrder" resultType="java.lang.Integer">
+        select count(1) from t_order
+        <where>
+            <if test="status != null">
+                and `status` = #{status}
+            </if>
+            <if test="createTime != null and endTime != null">
+                and create_time between #{createTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryOrderInfoById" resultMap="BackGroundBaseDtoMap">
+        select
+        t1.id, t1.order_number, t1.wx_user_id, t1.money, t1.`status`, t1.order_user_name, t1.order_phone,
+        t1.remark, t1.pay_time,t1.auto_check_time, t1.finish_time, t1.create_time, t1.out_trade_no,t1.check_code,
+        t2.nick_name
+        from t_order t1 left join t_wx_user t2 on t1.wx_user_id = t2.id
+        where t1.id = #{id}
     </select>
 </mapper>

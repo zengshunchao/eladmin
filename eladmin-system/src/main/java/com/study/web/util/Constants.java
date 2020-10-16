@@ -30,12 +30,12 @@ public class Constants {
     /**
      * 小程序appId
      */
-    public static final String WX_APPID = "wx98e69f1a2c931233";
+    public static final String WX_APPID = "wx28a53540e99155e8";
 
     /**
      * 小程序 appSecret
      */
-    public static final String WX_SECRET = "e99a08321a5a043b7cda7351b645cc86";
+    public static final String WX_SECRET = "fdefc1ca8e09b98fb7fb7b3a96ed98ef";
 
     /**
      * 授权类型，此处只需填写 authorization_code

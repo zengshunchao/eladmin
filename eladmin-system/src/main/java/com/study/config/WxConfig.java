@@ -9,7 +9,7 @@ public final class WxConfig {
     /**
      * 小程序appid
      */
-    public final static String APPID = "wxe86f60xxxxxxx";
+    public final static String APPID = "wx28a53540e99155e8";
     /**
      * 商户ID
      */
@@ -17,7 +17,7 @@ public final class WxConfig {
     /**
      * 跟微信支付约定的密钥
      */
-    public final static String KEY = "";
+    public final static String KEY = "fdefc1ca8e09b98fb7fb7b3a96ed98ef";
     /**
      * 回调地址
      */
