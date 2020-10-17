@@ -2,6 +2,7 @@ package com.study.web.service;
 
 import com.study.web.dto.BackGroundOrderInfoDto;
 import com.study.web.dto.BackGroundOrderQueryDto;
+import com.study.web.entity.Order;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -36,4 +37,10 @@ public interface BackGroundOrderService {
      * @return
      */
     BackGroundOrderInfoDto queryOrderById(Long id);
+
+    /**
+     *  订单核销
+     * @param order
+     */
+    void updateCheckTimeAndStatus(Order order);
 }

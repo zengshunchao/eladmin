@@ -16,6 +16,7 @@ import com.study.web.util.ServerUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -121,37 +122,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseInfoDto> queryAll(CourseQueryDto course) {
-        Course queryCourse = new Course();
-        try {
-            Date now = new Date();
-            queryCourse.setCourseName(course.getCourseName());
-            if (course.getLineType() != null) {
-                // 已下架
-                if (Constants.YES_OFFLINE == course.getLineType()) {
-                    queryCourse.setOfflineTime(now);
-                } else if (Constants.YES_ONLINE == course.getLineType()) {
-                    queryCourse.setOnlineTime(now);
-                    queryCourse.setOfflineTime(now);
-                } else if (Constants.NO_ONLINE == course.getLineType()) {
-                    queryCourse.setOnlineTime(now);
-                }
-            }
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            if (StringUtils.isNotEmpty(course.getOnlineTime())) {
-                String[] dates = course.getOnlineTime().split(",");
-                course.setOfflineTime(dates[1]);
-                Date onlineDate = format.parse(dates[0]);
-                queryCourse.setOnlineTime(onlineDate);
-            }
-            if (StringUtils.isNotEmpty(course.getOfflineTime())) {
-                Date offlineDate = format.parse(course.getOfflineTime());
-                queryCourse.setOfflineTime(offlineDate);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        List<CourseInfoDto> courseList = courseDao.queryAll(queryCourse);
+    public List<CourseInfoDto> queryAll(CourseQueryDto course, Pageable pageable) {
+        Course queryCourse = queryParam(course);
+        // 此处为什么没有减一，因pageable传过来的页码是计算过的
+        int startNum = pageable.getPageNumber() > 0 ? pageable.getPageNumber() * pageable.getPageSize() : 0;
+        List<CourseInfoDto> courseList = courseDao.queryAll(queryCourse, startNum, pageable.getPageSize());
         if (courseList != null && courseList.size() != 0) {
             for (CourseInfoDto info : courseList) {
                 // 设置课程状态
@@ -219,6 +194,46 @@ public class CourseServiceImpl implements CourseService {
 
     }
 
+    @Override
+    public int totalCourse(CourseQueryDto courseQueryDto) {
+        // 查询条件
+        Course course = queryParam(courseQueryDto);
+        int total = courseDao.totalCourseNum(course);
+        return total;
+    }
+
+    private Course queryParam(CourseQueryDto course) {
+        Course queryCourse = new Course();
+        try {
+            Date now = new Date();
+            queryCourse.setCourseName(course.getCourseName());
+            if (course.getLineType() != null) {
+                // 已下架
+                if (Constants.YES_OFFLINE == course.getLineType()) {
+                    queryCourse.setOfflineTime(now);
+                } else if (Constants.YES_ONLINE == course.getLineType()) {
+                    queryCourse.setOnlineTime(now);
+                    queryCourse.setOfflineTime(now);
+                } else if (Constants.NO_ONLINE == course.getLineType()) {
+                    queryCourse.setOnlineTime(now);
+                }
+            }
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            if (StringUtils.isNotEmpty(course.getOnlineTime())) {
+                String[] dates = course.getOnlineTime().split(",");
+                course.setOfflineTime(dates[1]);
+                Date onlineDate = format.parse(dates[0]);
+                queryCourse.setOnlineTime(onlineDate);
+            }
+            if (StringUtils.isNotEmpty(course.getOfflineTime())) {
+                Date offlineDate = format.parse(course.getOfflineTime());
+                queryCourse.setOfflineTime(offlineDate);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return queryCourse;
+    }
 
     private String toLineTypeString(CourseInfoDto info) {
         Date now = new Date();

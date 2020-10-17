@@ -45,12 +45,10 @@ public class CourseController {
     @PreAuthorize("@el.check('user:list')")
     public ResponseEntity<Object> queryList(CourseQueryDto course, Pageable pageable) {
         try {
-            //查询课程列表
-            List<CourseInfoDto> courses = courseService.queryAll(course);
-            if (courses != null) {
-                int page = courses.size();
-                courses = PageUtil.toPage(pageable.getPageNumber(), pageable.getPageSize(), courses);
-                return new ResponseEntity<>(PageUtil.toPage(courses, page), HttpStatus.OK);
+            int total = courseService.totalCourse(course);
+            if (total > 0){
+                List<CourseInfoDto> courses = courseService.queryAll(course,pageable);
+                return new ResponseEntity<>(PageUtil.toPage(courses, total), HttpStatus.OK);
             }
         } catch (Exception e) {
             log.error("course query fail: ()", e);

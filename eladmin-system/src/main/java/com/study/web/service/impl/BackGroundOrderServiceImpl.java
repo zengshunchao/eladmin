@@ -4,6 +4,7 @@ import com.study.web.dao.*;
 import com.study.web.dto.BackGroundOrderInfoDto;
 import com.study.web.dto.BackGroundOrderQueryDto;
 import com.study.web.dto.CourseInfoDto;
+import com.study.web.entity.Order;
 import com.study.web.entity.OrderCourseRel;
 import com.study.web.entity.Picture;
 import com.study.web.entity.WxUser;
@@ -14,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,8 +40,22 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
 
     @Override
     public List<BackGroundOrderInfoDto> queryOrderByLimit(BackGroundOrderQueryDto orderQueryDto, Pageable pageable) {
+        if (!StringUtils.isEmpty(orderQueryDto.getStartTime())) {
+            try {
+                // 时间段查询
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String[] timeStr = orderQueryDto.getStartTime().split(",");
+                Date startTime = format.parse(timeStr[0]);
+                Date endTime = format.parse(timeStr[1]);
+                orderQueryDto.setCreateTime(startTime);
+                orderQueryDto.setEndTime(endTime);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        int startNum = pageable.getPageNumber() > 0 ? pageable.getPageNumber() * pageable.getPageSize() : 0;
         // 分页查询订单
-        List<BackGroundOrderInfoDto> backGroundOrderInfoDtos = orderDao.queryOrderLimit(orderQueryDto, pageable.getPageNumber(), pageable.getPageSize());
+        List<BackGroundOrderInfoDto> backGroundOrderInfoDtos = orderDao.queryOrderLimit(orderQueryDto, startNum, pageable.getPageSize());
         backGroundOrderInfoDtos.stream().forEach(info -> {
             OrderCourseRel orderCourseRel = new OrderCourseRel();
             orderCourseRel.setOrderId(info.getId());
@@ -64,6 +81,8 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
                 if (shareNameList.size() != 0) {
                     String shareName = StringUtils.join(shareNameList.toArray(), ",");
                     info.setShareName(shareName);
+                } else {
+                    info.setShareName("-");
                 }
             }
         });
@@ -72,6 +91,19 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
 
     @Override
     public int totalOrder(BackGroundOrderQueryDto orderQueryDto) {
+        if (!StringUtils.isEmpty(orderQueryDto.getStartTime())) {
+            try {
+                // 时间段查询
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String[] timeStr = orderQueryDto.getStartTime().split(",");
+                Date startTime = format.parse(timeStr[0]);
+                Date endTime = format.parse(timeStr[1]);
+                orderQueryDto.setCreateTime(startTime);
+                orderQueryDto.setEndTime(endTime);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return orderDao.totalOrder(orderQueryDto);
     }
 
@@ -118,5 +150,12 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
         }
 
         return backGroundOrderInfoDto;
+    }
+
+    @Override
+    public void updateCheckTimeAndStatus(Order order) {
+        order.setStatus(Constants.FINISHED);
+        order.setFinishTime(new Date());
+        orderDao.update(order);
     }
 }

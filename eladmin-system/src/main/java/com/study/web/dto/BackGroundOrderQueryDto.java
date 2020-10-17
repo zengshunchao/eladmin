@@ -16,4 +16,9 @@ public class BackGroundOrderQueryDto extends Order {
      * 查询-结束时间
      */
     private Date endTime;
+
+    /**
+     *  查询接受时间参数
+     */
+    private String startTime;
 }

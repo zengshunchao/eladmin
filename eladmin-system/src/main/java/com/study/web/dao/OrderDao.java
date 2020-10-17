@@ -88,11 +88,11 @@ public interface OrderDao {
      * 后台-订单查询
      *
      * @param order
-     * @param pageNo
+     * @param startNum
      * @param pageSize
      * @return
      */
-    List<BackGroundOrderInfoDto> queryOrderLimit(BackGroundOrderQueryDto order, int pageNo, int pageSize);
+    List<BackGroundOrderInfoDto> queryOrderLimit(BackGroundOrderQueryDto order, @Param("startNum") int startNum, @Param("pageSize") int pageSize);
 
     /**
      * 统计订单
@@ -113,6 +113,7 @@ public interface OrderDao {
 
     /**
      * 推广订单
+     *
      * @param orderDto
      * @return
      */

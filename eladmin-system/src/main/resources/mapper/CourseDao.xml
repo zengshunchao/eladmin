@@ -35,6 +35,53 @@
         <include refid="BaseSql"></include>
         from t_course
         <where>
+            <if test="course.id != null">
+                and id = #{course.id}
+            </if>
+            <if test="course.courseName != null and course.courseName != ''">
+                and course_name like concat('%',#{course.courseName},'%')
+            </if>
+            <if test="course.courseMoney != null">
+                and course_money = #{course.courseMoney}
+            </if>
+            <if test="course.courseCommission != null">
+                and course_commission = #{course.courseCommission}
+            </if>
+            <if test="course.branchName != null and course.branchName != ''">
+                and branch_name = #{course.branchName}
+            </if>
+            <if test="course.branchAddress != null and course.branchAddress != ''">
+                and branch_address = #{course.branchAddress}
+            </if>
+            <if test="course.actionArea != null and course.actionArea != ''">
+                and action_area = #{course.actionArea}
+            </if>
+            <if test="course.onlineTime != null and course.offlineTime == null">
+                and online_time <![CDATA[>]]> #{course.onlineTime}
+            </if>
+            <if test="course.offlineTime != null and course.onlineTime == null">
+                and offline_time <![CDATA[<]]> #{course.offlineTime}
+            </if>
+            <if test="course.offlineTime != null and course.onlineTime != null">
+                and online_time <![CDATA[<=]]> #{course.onlineTime}
+                and offline_time <![CDATA[>]]> #{course.offlineTime}
+            </if>
+            <if test="course.createTime != null">
+                and create_time = #{course.createTime}
+            </if>
+            <if test="course.createUser != null and course.createUser != ''">
+                and create_user = #{course.createUser}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        limit #{startNum},#{pageSize}
+    </select>
+
+    <select id="totalCourseNum" resultType="java.lang.Integer">
+        select
+        count(1)
+        from t_course
+        <where>
             <if test="id != null">
                 and id = #{id}
             </if>
@@ -73,7 +120,6 @@
                 and create_user = #{createUser}
             </if>
         </where>
-        ORDER BY create_time DESC
     </select>
 
     <select id="wxQueryCourseList" parameterType="com.study.web.dto.CourseInfoDto" resultMap="CourseMap">

@@ -26,12 +26,20 @@ public interface CourseDao {
     CourseInfoDto queryById(@Param("id") Long id);
 
     /**
-     * 通过实体作为筛选条件查询
-     *
-     * @param course 实例对象
-     * @return 对象列表
+     *  后台-分页查询课程列表
+     * @param course
+     * @param startNum
+     * @param pageSize
+     * @return
      */
-    List<CourseInfoDto> queryAll(Course course);
+    List<CourseInfoDto> queryAll(Course course,@Param("startNum") int startNum,@Param("pageSize") int pageSize);
+
+    /**
+     *  分页统计
+     * @param course
+     * @return
+     */
+    int totalCourseNum(Course course);
 
     /**
      * 新增数据

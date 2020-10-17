@@ -1,7 +1,10 @@
 package com.study.web.util;
 
+/**
+ * @author zsc
+ * @date 2020/10/17 0017 17:52
+ */
 public class Constants {
-
     /**
      * 未上架
      */

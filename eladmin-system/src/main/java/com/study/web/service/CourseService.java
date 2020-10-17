@@ -3,6 +3,7 @@ package com.study.web.service;
 import com.study.web.dto.CourseInfoDto;
 import com.study.web.dto.CourseQueryDto;
 import com.study.web.entity.Course;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,9 +56,10 @@ public interface CourseService {
      * 查询所有数据
      *
      * @param course
+     * @param pageable
      * @return
      */
-    List<CourseInfoDto> queryAll(CourseQueryDto course);
+    List<CourseInfoDto> queryAll(CourseQueryDto course, Pageable pageable);
 
     /**
      * 批量删除
@@ -72,4 +74,11 @@ public interface CourseService {
      * @param id
      */
     void updateLineType(Long id);
+
+    /**
+     *  分页查询统计
+     * @param courseQueryDto
+     * @return
+     */
+    int totalCourse(CourseQueryDto courseQueryDto);
 }
