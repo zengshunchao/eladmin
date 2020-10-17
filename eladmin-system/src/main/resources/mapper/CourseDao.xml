@@ -76,12 +76,20 @@
         ORDER BY create_time DESC
     </select>
 
-    <select id="wxQueryCourseList" resultMap="CourseMap">
+    <select id="wxQueryCourseList" parameterType="com.study.web.dto.CourseInfoDto" resultMap="CourseMap">
         SELECT
         <include refid="BaseSql"></include>
+        <if test="latitude != null and longitude != null">
+            ,ROUND(6378.138 * 2 * ASIN(SQRT(POW(SIN((#{latitude} * PI() / 180 - latitude * PI() / 180) / 2),2) + COS(40.0497810000 * PI() / 180) * COS(latitude * PI() / 180) * POW(
+            SIN(( #{longitude} * PI() / 180 - longitude * PI() / 180 ) / 2),2))) * 1000 ) AS dis
+        </if>
         FROM t_course
         where online_time <![CDATA[<=]]> now() and offline_time <![CDATA[>]]> now()
-        order by online_time desc
+        order by
+        <if test="latitude != null and longitude != null">
+            dis,
+        </if>
+        online_time desc
         <if test="pageSize != 0">
             limit #{startNum}, #{pageSize}
         </if>

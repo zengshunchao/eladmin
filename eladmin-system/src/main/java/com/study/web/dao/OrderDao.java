@@ -110,4 +110,11 @@ public interface OrderDao {
      * @return
      */
     BackGroundOrderInfoDto queryOrderInfoById(Long id);
+
+    /**
+     * 推广订单
+     * @param orderDto
+     * @return
+     */
+    List<OrderDto> getShareOrderList(OrderDto orderDto);
 }

@@ -45,4 +45,13 @@ public class WalletWater implements Serializable {
      */
     private Date createTime;
 
+    public WalletWater() {
+    }
+
+    public WalletWater(Long wxUserId, BigDecimal money, Integer type, String remark) {
+        this.wxUserId = wxUserId;
+        this.money = money;
+        this.type = type;
+        this.remark = remark;
+    }
 }

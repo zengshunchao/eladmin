@@ -74,7 +74,7 @@ public interface DistributionDao {
      * @param distributionDto
      * @return
      */
-    List<WxUserDto> getDistributionList(DistributionDto distributionDto);
+    List<DistributionDto> getDistributionList(DistributionDto distributionDto);
 
     /**
      * 总记录数

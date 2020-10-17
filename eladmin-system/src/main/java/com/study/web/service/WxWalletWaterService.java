@@ -38,14 +38,6 @@ public interface WxWalletWaterService {
     WalletWater insert(WalletWater walletWater);
 
     /**
-     * 修改数据
-     *
-     * @param walletWater 实例对象
-     * @return 实例对象
-     */
-    WalletWater update(WalletWater walletWater);
-
-    /**
      * 通过主键删除数据
      *
      * @param id 主键

@@ -110,8 +110,12 @@ public class WxDistributionServiceImpl implements WxDistributionService {
             distributionDao.insert(distribution);
             //添加钱包信息
             BigDecimal zero = new BigDecimal(0);
-            Wallet wallet = new Wallet(distribution.getWxUserId(), zero, zero, zero, zero);
-            wxWalletService.insert(wallet);
+            Wallet wallet = wxWalletService.queryByWxUserId(distribution.getWxUserId());
+            if(null == wallet){
+                wallet = new Wallet(distribution.getWxUserId(), zero, zero, zero, zero);
+                wxWalletService.insert(wallet);
+            }
+
         }
     }
 
@@ -122,7 +126,7 @@ public class WxDistributionServiceImpl implements WxDistributionService {
      * @return
      */
     @Override
-    public List<WxUserDto> getDistributionList(DistributionDto distributionDto) {
+    public List<DistributionDto> getDistributionList(DistributionDto distributionDto) {
         return distributionDao.getDistributionList(distributionDto);
     }
 

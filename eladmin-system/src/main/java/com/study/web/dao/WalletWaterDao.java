@@ -50,14 +50,6 @@ public interface WalletWaterDao {
     int insert(WalletWater walletWater);
 
     /**
-     * 修改数据
-     *
-     * @param walletWater 实例对象
-     * @return 影响行数
-     */
-    int update(WalletWater walletWater);
-
-    /**
      * 通过主键删除数据
      *
      * @param id 主键

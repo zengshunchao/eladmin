@@ -1,5 +1,6 @@
 package com.study.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -34,5 +35,15 @@ public class DistributionDto extends PageInfo implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
+
+    /**
+     * 头像路径
+     */
+    private String avatarUrl;
+    /**
+     *  真实姓名
+     */
+    private String realName;
 }

@@ -73,6 +73,22 @@ public class WxOrderController extends JsonResultController {
         }
     }
 
+
+
+    @ApiOperation("微信-获取推广订单列表")
+    @RequestMapping(value = "/getShareOrderList", method = RequestMethod.POST)
+    public ResultValue getShareOrderList(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderDto orderDto) {
+        try {
+            setPageInfo(orderDto);
+            List<OrderDto> orderList = wxOrderService.getShareOrderList(orderDto);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), orderList);
+        } catch (Exception e) {
+            log.error("getOrderList fail {}", e);
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+        }
+    }
+
+
     @ApiOperation("微信-获取订单详情")
     @RequestMapping(value = "/getOrderInfo", method = RequestMethod.POST)
     public ResultValue getOrderInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {

@@ -12,7 +12,7 @@ import java.util.List;
  * 订单详情
  */
 @Data
-public class OrderDto {
+public class OrderDto extends PageInfo {
 
     /**
      * 表主键
@@ -84,6 +84,12 @@ public class OrderDto {
 
     @Transient
     private String phone;
+
+    /**
+     * 分享人姓名
+     */
+    @Transient
+    private String shareUserName;
 
     /**
      * 订单核销码

@@ -45,7 +45,7 @@ public class Commission implements Serializable {
      */
     private Date lockTime;
     /**
-     * 锁定状态
+     * 锁定状态0锁定 1解锁
      */
     private Integer lockStatus;
 

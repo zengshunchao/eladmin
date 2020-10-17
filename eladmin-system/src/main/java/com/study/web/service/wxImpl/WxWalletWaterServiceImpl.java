@@ -57,19 +57,6 @@ public class WxWalletWaterServiceImpl implements WxWalletWaterService {
     }
 
     /**
-     * 修改数据
-     *
-     * @param walletWater 实例对象
-     * @return 实例对象
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public WalletWater update(WalletWater walletWater) {
-        this.walletWaterDao.update(walletWater);
-        return this.queryById(walletWater.getId());
-    }
-
-    /**
      * 通过主键删除数据
      *
      * @param id 主键

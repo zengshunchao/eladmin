@@ -162,36 +162,9 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 订单不为空则查询订单关联的课程
         if (orderDtos != null && orderDtos.size() != 0) {
             for (OrderDto orderDto : orderDtos) {
-                List<OrderCourseRelDto> courseList = new ArrayList<>();
-                // 根据订单id查询订单关联的课程信息
-                OrderCourseRel orderCourseRel = new OrderCourseRel();
-                orderCourseRel.setOrderId(orderDto.getId());
-                List<OrderCourseRel> orderCourseRels = orderCourseRelDao.queryAll(orderCourseRel);
-                // 查询课程详细信息
-                if (orderCourseRels != null && orderCourseRels.size() != 0) {
-                    for (OrderCourseRel rel : orderCourseRels) {
-                        OrderCourseRelDto orderCourseRelDto = new OrderCourseRelDto();
-                        CourseInfoDto courseInfoDto = courseDao.queryById(rel.getCourseId());
-                        WxUser user = wxUserDao.queryById(rel.getShareId());
-                        orderCourseRelDto.setCourseNumber(rel.getCourseNumber());
-                        if (user != null) {
-                            orderCourseRelDto.setShareName(user.getNickName());
-                        }
-                        BeanUtils.copyProperties(courseInfoDto, orderCourseRelDto);
-                        //查询课程封面图
-                        List<Picture> covers = pictureDao.queryPictureListByType(rel.getCourseId(), Constants.PICTURE_TYPE_COVER);
-                        orderCourseRelDto.setCoverPicture(covers);
-
-                        // 详情图
-                        List<Picture> infos = pictureDao.queryPictureListByType(rel.getCourseId(), Constants.PICTURE_TYPE_INFO);
-                        orderCourseRelDto.setCourseInfoPicture(infos);
-                        courseList.add(orderCourseRelDto);
-                    }
-                    orderDto.setCourseList(courseList);
-                }
+                courseInfoForOrder(orderDto);
             }
         }
-
         return orderDtos;
     }
 
@@ -204,33 +177,8 @@ public class WxOrderServiceImpl implements WxOrderService {
             WxUser buyUser = wxUserDao.queryById(orderDto.getWxUserId());
             orderDto.setRealName(buyUser.getRealName());
             orderDto.setPhone(buyUser.getPhone());
-            List<OrderCourseRelDto> courseList = new ArrayList<>();
-            // 根据订单id查询订单关联的课程信息
-            OrderCourseRel orderCourseRel = new OrderCourseRel();
-            orderCourseRel.setOrderId(orderDto.getId());
-            List<OrderCourseRel> orderCourseRels = orderCourseRelDao.queryAll(orderCourseRel);
-            // 查询课程详细信息
-            if (orderCourseRels != null && orderCourseRels.size() != 0) {
-                for (OrderCourseRel rel : orderCourseRels) {
-                    OrderCourseRelDto orderCourseRelDto = new OrderCourseRelDto();
-                    CourseInfoDto courseInfoDto = courseDao.queryById(rel.getCourseId());
-                    WxUser user = wxUserDao.queryById(rel.getShareId());
-                    orderCourseRelDto.setCourseNumber(rel.getCourseNumber());
-                    if (user != null) {
-                        orderCourseRelDto.setShareName(user.getNickName());
-                    }
-                    BeanUtils.copyProperties(courseInfoDto, orderCourseRelDto);
-                    //查询课程封面图
-                    List<Picture> covers = pictureDao.queryPictureListByType(rel.getCourseId(), Constants.PICTURE_TYPE_COVER);
-                    orderCourseRelDto.setCoverPicture(covers);
+            courseInfoForOrder(orderDto);
 
-                    // 详情图
-                    List<Picture> infos = pictureDao.queryPictureListByType(rel.getCourseId(), Constants.PICTURE_TYPE_INFO);
-                    orderCourseRelDto.setCourseInfoPicture(infos);
-                    courseList.add(orderCourseRelDto);
-                }
-                orderDto.setCourseList(courseList);
-            }
         }
         return orderDto;
     }
@@ -238,5 +186,54 @@ public class WxOrderServiceImpl implements WxOrderService {
     @Override
     public Order queryOrderByOutTradeNo(String outTradeNo) {
         return orderDao.queryOrderByOutTradeNo(outTradeNo);
+    }
+
+    /**
+     * 推广订单
+     * @param orderDto
+     * @return
+     */
+    @Override
+    public List<OrderDto> getShareOrderList(OrderDto orderDto) {
+        // 查询当前微信用户推广订单
+        List<OrderDto> orderDtos = orderDao.getShareOrderList(orderDto);
+        // 订单不为空则查询订单关联的课程
+        if (orderDtos != null && orderDtos.size() != 0) {
+            for (OrderDto order : orderDtos) {
+                courseInfoForOrder(order);
+            }
+        }
+        return orderDtos;
+    }
+
+    //查询订单课程详细信息
+    private void courseInfoForOrder(OrderDto orderDto){
+        List<OrderCourseRelDto> courseList = new ArrayList<>();
+        // 根据订单id查询订单关联的课程信息
+        OrderCourseRel orderCourseRel = new OrderCourseRel();
+        orderCourseRel.setOrderId(orderDto.getId());
+        List<OrderCourseRel> orderCourseRels = orderCourseRelDao.queryAll(orderCourseRel);
+        // 查询课程详细信息
+        if (orderCourseRels != null && orderCourseRels.size() != 0) {
+            for (OrderCourseRel rel : orderCourseRels) {
+                OrderCourseRelDto orderCourseRelDto = new OrderCourseRelDto();
+                CourseInfoDto courseInfoDto = courseDao.queryById(rel.getCourseId());
+                WxUser user = wxUserDao.queryById(rel.getShareId());
+                orderCourseRelDto.setCourseNumber(rel.getCourseNumber());
+                if (user != null) {
+                    orderCourseRelDto.setShareName(user.getNickName());
+                }
+                BeanUtils.copyProperties(courseInfoDto, orderCourseRelDto);
+                //查询课程封面图
+                List<Picture> covers = pictureDao.queryPictureListByType(rel.getCourseId(), Constants.PICTURE_TYPE_COVER);
+                orderCourseRelDto.setCoverPicture(covers);
+
+                // 详情图
+                List<Picture> infos = pictureDao.queryPictureListByType(rel.getCourseId(), Constants.PICTURE_TYPE_INFO);
+                orderCourseRelDto.setCourseInfoPicture(infos);
+                courseList.add(orderCourseRelDto);
+            }
+            orderDto.setCourseList(courseList);
+        }
     }
 }

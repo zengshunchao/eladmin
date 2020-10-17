@@ -70,7 +70,7 @@ public interface WxDistributionService {
      * @param distributionDto
      * @return
      */
-    List<WxUserDto> getDistributionList(DistributionDto distributionDto);
+    List<DistributionDto> getDistributionList(DistributionDto distributionDto);
     /**
      * 总记录数
      * @param distributionDto

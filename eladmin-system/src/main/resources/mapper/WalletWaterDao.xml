@@ -51,31 +51,8 @@
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into t_wallet_water(wx_user_id, money, `type`, remark, create_time)
-        values (#{wxUserId}, #{money}, #{type}, #{remark}, #{createTime})
+        values (#{wxUserId}, #{money}, #{type}, #{remark}, now())
     </insert>
-
-    <!--通过主键修改数据-->
-    <update id="update">
-        update t_wallet_water
-        <set>
-            <if test="wxUserId != null">
-                wx_user_id = #{wxUserId},
-            </if>
-            <if test="money != null">
-                money = #{money},
-            </if>
-            <if test="type != null">
-                `type` = #{type},
-            </if>
-            <if test="remark != null and remark != ''">
-                remark = #{remark},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">

@@ -74,4 +74,11 @@ public interface WxOrderService {
      * @return
      */
     Order queryOrderByOutTradeNo(String outTradeNo);
+
+    /**
+     * 获取推广订单列表
+     * @param orderDto
+     * @return
+     */
+    List<OrderDto> getShareOrderList(OrderDto orderDto);
 }

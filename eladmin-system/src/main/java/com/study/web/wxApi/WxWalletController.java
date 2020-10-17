@@ -2,6 +2,7 @@ package com.study.web.wxApi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.study.web.dto.ResultValue;
+import com.study.web.dto.WalletDto;
 import com.study.web.entity.Wallet;
 import com.study.web.service.WxWalletService;
 import com.study.web.util.ResponseCode;
@@ -30,6 +31,18 @@ public class WxWalletController extends JsonResultController{
         try {
             wallet =  wxWalletService.queryByWxUserId(wallet.getWxUserId());
             return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),wallet);
+        } catch (Exception e) {
+            log.error("getWallet fail {}", e);
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+        }
+    }
+
+    @ApiOperation("提现")
+    @RequestMapping(value = "withdrawal", method = RequestMethod.POST)
+    public ResultValue withdrawal(@RequestBody WalletDto walletDto){
+        try {
+            wxWalletService.withdrawal(walletDto);
+            return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
             log.error("getWallet fail {}", e);
             return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());

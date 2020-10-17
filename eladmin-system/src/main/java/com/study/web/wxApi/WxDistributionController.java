@@ -46,7 +46,7 @@ public class WxDistributionController extends JsonResultController {
     public TableResultValue getDistributionList(@RequestBody DistributionDto distributionDto){
         try {
             setPageInfo(distributionDto);
-            List<WxUserDto> wxUserDtoList = new ArrayList<>();
+            List<DistributionDto> wxUserDtoList = new ArrayList<>();
             int total = wxDistributionService.totalList(distributionDto);
             if(total>0){
                 wxUserDtoList = wxDistributionService.getDistributionList(distributionDto);

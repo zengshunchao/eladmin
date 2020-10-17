@@ -1,7 +1,10 @@
 package com.study.web.service.wxImpl;
 
 import com.study.web.dao.WalletDao;
+import com.study.web.dao.WalletWaterDao;
+import com.study.web.dto.WalletDto;
 import com.study.web.entity.Wallet;
+import com.study.web.entity.WalletWater;
 import com.study.web.service.WxWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,9 @@ import java.util.List;
 public class WxWalletServiceImpl implements WxWalletService {
     @Autowired
     private WalletDao walletDao;
+
+    @Autowired
+    private WalletWaterDao walletWaterDao;
 
     /**
      * 通过ID查询单条数据
@@ -84,5 +90,26 @@ public class WxWalletServiceImpl implements WxWalletService {
     @Override
     public Wallet queryByWxUserId(Long wxUserId) {
         return this.walletDao.queryByWxUserId(wxUserId);
+    }
+
+    /**
+     * 提现
+     * @param walletDto
+     */
+    @Override
+    public void withdrawal(WalletDto walletDto) throws Exception {
+        Wallet wallet = this.walletDao.queryById(walletDto.getId());
+        if(null == wallet){
+            throw new Exception("未查询到钱包");
+        }
+        if(walletDto.getWithdrawal().compareTo(wallet.getMayCashMoney())>0){
+            throw new Exception("提现金额异常");
+        }
+        wallet.setCashMoney(wallet.getCashMoney().add(walletDto.getWithdrawal()));
+        wallet.setMayCashMoney(wallet.getMayCashMoney().subtract(walletDto.getWithdrawal()));
+        walletDao.update(wallet);
+        //添加流水信息
+        WalletWater water =  new WalletWater(walletDto.getWxUserId(),walletDto.getWithdrawal(),2,"提现");
+        walletWaterDao.insert(water);
     }
 }
