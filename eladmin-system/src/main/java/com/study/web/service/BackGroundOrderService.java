@@ -2,6 +2,7 @@ package com.study.web.service;
 
 import com.study.web.dto.BackGroundOrderInfoDto;
 import com.study.web.dto.BackGroundOrderQueryDto;
+import com.study.web.dto.ExportOrderInfoDto;
 import com.study.web.entity.Order;
 import org.springframework.data.domain.Pageable;
 
@@ -43,4 +44,10 @@ public interface BackGroundOrderService {
      * @param order
      */
     void updateCheckTimeAndStatus(Order order);
+
+    /**
+     *  导出订单
+     * @return
+     */
+    List<ExportOrderInfoDto> exportOrderExcel();
 }

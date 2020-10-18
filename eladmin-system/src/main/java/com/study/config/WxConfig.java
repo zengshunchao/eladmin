@@ -13,15 +13,15 @@ public final class WxConfig {
     /**
      * 商户ID
      */
-    public final static String MCHID = "15365xxxxx";
+    public final static String MCHID = "1603403622";
     /**
      * 跟微信支付约定的密钥
      */
-    public final static String KEY = "fdefc1ca8e09b98fb7fb7b3a96ed98ef";
+    public final static String KEY = "f47a6fd6fc5032b6d1668C7898EC5546";
     /**
      * 回调地址
      */
-    public final static String NOTIFY_URL = "/admin/wxnotify";
+    public final static String NOTIFY_URL = "https:tomuchlove:8000/wxApi/order/wxNotify";
     /**
      * 统一下单地址
      */

@@ -118,4 +118,11 @@ public interface OrderDao {
      * @return
      */
     List<OrderDto> getShareOrderList(OrderDto orderDto);
+
+    /**
+     * 查询所有订单-导出excel
+     *
+     * @return
+     */
+    List<BackGroundOrderInfoDto> queryAllOrder();
 }

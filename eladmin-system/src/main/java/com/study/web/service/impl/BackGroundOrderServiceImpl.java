@@ -4,6 +4,7 @@ import com.study.web.dao.*;
 import com.study.web.dto.BackGroundOrderInfoDto;
 import com.study.web.dto.BackGroundOrderQueryDto;
 import com.study.web.dto.CourseInfoDto;
+import com.study.web.dto.ExportOrderInfoDto;
 import com.study.web.entity.Order;
 import com.study.web.entity.OrderCourseRel;
 import com.study.web.entity.Picture;
@@ -11,6 +12,7 @@ import com.study.web.entity.WxUser;
 import com.study.web.service.BackGroundOrderService;
 import com.study.web.util.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,34 +59,7 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
         // 分页查询订单
         List<BackGroundOrderInfoDto> backGroundOrderInfoDtos = orderDao.queryOrderLimit(orderQueryDto, startNum, pageable.getPageSize());
         backGroundOrderInfoDtos.stream().forEach(info -> {
-            OrderCourseRel orderCourseRel = new OrderCourseRel();
-            orderCourseRel.setOrderId(info.getId());
-            List<OrderCourseRel> orderCourseRels = orderCourseRelDao.queryAll(orderCourseRel);
-            if (orderCourseRels != null && orderCourseRels.size() != 0) {
-                // 拼接名称
-                List<String> courseNameList = new ArrayList<>();
-                List<String> shareNameList = new ArrayList<>();
-                int num = 0;
-                for (OrderCourseRel rel : orderCourseRels) {
-                    CourseInfoDto courseInfoDto = courseDao.queryById(rel.getCourseId());
-                    courseNameList.add(courseInfoDto.getCourseName());
-                    if (rel.getShareId() != null) {
-                        WxUser user = wxUserDao.queryById(rel.getShareId());
-                        shareNameList.add(user.getNickName());
-                    }
-                    num = num + rel.getCourseNumber();
-                }
-                // 拼接课程名称
-                String name = StringUtils.join(courseNameList.toArray(), ",");
-                info.setCourseName(name);
-                info.setCourseNumber(num);
-                if (shareNameList.size() != 0) {
-                    String shareName = StringUtils.join(shareNameList.toArray(), ",");
-                    info.setShareName(shareName);
-                } else {
-                    info.setShareName("-");
-                }
-            }
+            queryCourseInfo(info);
         });
         return backGroundOrderInfoDtos;
     }
@@ -110,6 +85,36 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
     @Override
     public BackGroundOrderInfoDto queryOrderById(Long id) {
         BackGroundOrderInfoDto backGroundOrderInfoDto = orderDao.queryOrderInfoById(id);
+        queryCourseInfo(backGroundOrderInfoDto);
+        return backGroundOrderInfoDto;
+    }
+
+    @Override
+    public void updateCheckTimeAndStatus(Order order) {
+        order.setStatus(Constants.FINISHED);
+        order.setFinishTime(new Date());
+        orderDao.update(order);
+    }
+
+    @Override
+    public List<ExportOrderInfoDto> exportOrderExcel() {
+
+        // 查询所有订单
+        List<BackGroundOrderInfoDto> backGroundOrderInfoDtos = orderDao.queryAllOrder();
+        // 导出所有订单
+        List<ExportOrderInfoDto> excelList = new ArrayList<>();
+        if (backGroundOrderInfoDtos.size() != 0) {
+            backGroundOrderInfoDtos.stream().forEach(orderInfo -> {
+                queryCourseInfo(orderInfo);
+                ExportOrderInfoDto exportOrderInfoDto = new ExportOrderInfoDto();
+                BeanUtils.copyProperties(orderInfo, exportOrderInfoDto);
+                excelList.add(exportOrderInfoDto);
+            });
+        }
+        return excelList;
+    }
+
+    private void queryCourseInfo(BackGroundOrderInfoDto backGroundOrderInfoDto) {
         if (backGroundOrderInfoDto != null) {
             OrderCourseRel orderCourseRel = new OrderCourseRel();
             orderCourseRel.setOrderId(backGroundOrderInfoDto.getId());
@@ -142,20 +147,13 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
                 if (shareNameList.size() != 0) {
                     String shareName = StringUtils.join(shareNameList.toArray(), ",");
                     backGroundOrderInfoDto.setShareName(shareName);
+                } else {
+                    backGroundOrderInfoDto.setShareName("-");
                 }
                 if (coverPathList.size() != 0) {
                     backGroundOrderInfoDto.setCoursePicturePath(coverPathList.get(0));
                 }
             }
         }
-
-        return backGroundOrderInfoDto;
-    }
-
-    @Override
-    public void updateCheckTimeAndStatus(Order order) {
-        order.setStatus(Constants.FINISHED);
-        order.setFinishTime(new Date());
-        orderDao.update(order);
     }
 }

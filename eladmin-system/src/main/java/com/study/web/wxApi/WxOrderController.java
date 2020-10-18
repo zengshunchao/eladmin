@@ -51,6 +51,7 @@ public class WxOrderController extends JsonResultController {
             if (resultMap == null) {
                 return successResult(ResponseCode.UNIFIEDORDER.getCode(), ResponseCode.UNIFIEDORDER.getMsg());
             }
+            System.out.println("统一下单接口返回参数到小程序\n" + jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), resultMap));
             return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), resultMap);
         } catch (Exception e) {
             log.error("unifiedOrder fail {}", e);
@@ -72,7 +73,6 @@ public class WxOrderController extends JsonResultController {
             return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
-
 
 
     @ApiOperation("微信-获取推广订单列表")
