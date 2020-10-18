@@ -21,7 +21,7 @@ public final class WxConfig {
     /**
      * 回调地址
      */
-    public final static String NOTIFY_URL = "https:tomuchlove:8000/wxApi/order/wxNotify";
+    public final static String NOTIFY_URL = "https://tomuchlove:8000/wxApi/order/wxNotify";
     /**
      * 统一下单地址
      */

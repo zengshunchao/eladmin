@@ -81,4 +81,11 @@ public interface WxOrderService {
      * @return
      */
     List<OrderDto> getShareOrderList(OrderDto orderDto);
+
+    /**
+     *  根据订单id查询订单
+     * @param id
+     * @return
+     */
+    OrderDto queryByOrderId(Long id);
 }

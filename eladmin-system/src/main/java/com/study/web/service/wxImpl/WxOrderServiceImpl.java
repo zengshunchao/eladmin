@@ -206,6 +206,11 @@ public class WxOrderServiceImpl implements WxOrderService {
         return orderDtos;
     }
 
+    @Override
+    public OrderDto queryByOrderId(Long id) {
+        return orderDao.queryById(id);
+    }
+
     //查询订单课程详细信息
     private void courseInfoForOrder(OrderDto orderDto){
         List<OrderCourseRelDto> courseList = new ArrayList<>();

@@ -122,7 +122,7 @@ public class WxOrderController extends JsonResultController {
             String resXml = "";
 
             Map<String, String> map = XmlUtil.getMapFromXML(notifyXml);
-            System.out.println("支付回调数据:\n" + map);
+            log.info("支付回调数据:\n" + map);
             String returnCode = (String) map.get("return_code");
             if ("SUCCESS".equalsIgnoreCase(returnCode)) {
                 String resultCode = map.get("result_code");
@@ -135,21 +135,23 @@ public class WxOrderController extends JsonResultController {
                         // 商户订单号
                         String out_trade_no = map.get("out_trade_no");
                         Order order = wxOrderService.queryOrderByOutTradeNo(out_trade_no);
-                        // 验证回调金额与本地订单金额
-                        String total_fee = map.get("total_fee");
-                        BigDecimal totalMoney = new BigDecimal(total_fee);
-                        // 金额相等则修改订单状态
-                        if (order.getMoney().multiply(BigDecimal.valueOf(100)).compareTo(totalMoney) == 0) {
-                            // 获取支付完成时间
-                            String time_end = map.get("time_end");
-                            Date payTime = TimeUtil.stringToDate(time_end, "yyyyMMddHHmmss");
-                            Order updateOrder = new Order();
-                            updateOrder.setId(order.getId());
-                            // 状态修改为待使用
-                            updateOrder.setStatus(Constants.UNUSED);
-                            updateOrder.setPayTime(payTime);
-                            updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
-                            wxOrderService.update(order);
+                        if (order.getStatus() == Constants.UNPAID) {
+                            // 验证回调金额与本地订单金额
+                            String total_fee = map.get("total_fee");
+                            BigDecimal totalMoney = new BigDecimal(total_fee);
+                            // 金额相等则修改订单状态
+                            if (order.getMoney().multiply(BigDecimal.valueOf(100)).compareTo(totalMoney) == 0) {
+                                // 获取支付完成时间
+                                String time_end = map.get("time_end");
+                                Date payTime = TimeUtil.stringToDate(time_end, "yyyyMMddHHmmss");
+                                Order updateOrder = new Order();
+                                updateOrder.setId(order.getId());
+                                // 状态修改为待使用
+                                updateOrder.setStatus(Constants.UNUSED);
+                                updateOrder.setPayTime(payTime);
+                                updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
+                                wxOrderService.update(order);
+                            }
                         }
                         resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
                                 + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
@@ -176,5 +178,33 @@ public class WxOrderController extends JsonResultController {
         }
     }
 
+    @ApiOperation("微信-支付成功主动回调修改订单状态")
+    @RequestMapping(value = "/updateOrderStatus", method = RequestMethod.POST)
+    public ResultValue updateOrderStatus(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
+        try {
+            if (order.getId() == null) {
+                return errorResult(ResponseCode.BADREQUESTPARAM.getCode(), ResponseCode.BADREQUESTPARAM.getMsg());
+            }
+            OrderDto orderDto = wxOrderService.queryByOrderId(order.getId());
+            if (orderDto == null) {
+                return errorResult(ResponseCode.NODATA.getCode(), ResponseCode.NODATA.getMsg());
+            }
+            // 如果订单状态为待支付才修改状态
+            if (orderDto.getStatus() == Constants.UNPAID) {
+                Date payTime = new Date();
+                Order updateOrder = new Order();
+                updateOrder.setId(order.getId());
+                // 状态修改为待使用
+                updateOrder.setStatus(Constants.UNUSED);
+                updateOrder.setPayTime(payTime);
+                updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
+                wxOrderService.update(order);
+            }
+            return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
+        } catch (Exception e) {
+            log.error("getOrderInfo fail {}", e);
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+        }
+    }
 }
 
