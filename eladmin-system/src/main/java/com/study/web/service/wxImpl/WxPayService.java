@@ -91,7 +91,7 @@ public class WxPayService {
         try {
             // 请求统一下单接口
             Map<String, String> resultMap = wxPay.unifiedOrder(reqParams);
-            System.out.println("统一下单接口返回: " + resultMap);
+            log.info("统一下单接口返回: " + resultMap);
             String return_code = (String) resultMap.get("return_code");
             String result_code = (String) resultMap.get("result_code");
             Long timeStamp = System.currentTimeMillis() / 1000;
@@ -109,7 +109,7 @@ public class WxPayService {
                 map.put("appId", WxConfig.APPID);
                 String sign = WXPayUtil.generateSignature(map, WxConfig.KEY);
                 map.put("paySign", sign);
-                System.out.println("生成的签名paySign : " + sign);
+                log.info("生成的签名paySign : " + sign);
                 return map;
             } else {
                 return null;

@@ -14,6 +14,7 @@ import com.study.web.util.TimeUtil;
 import com.study.web.util.XmlUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -150,7 +151,7 @@ public class WxOrderController extends JsonResultController {
                                 updateOrder.setStatus(Constants.UNUSED);
                                 updateOrder.setPayTime(payTime);
                                 updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
-                                wxOrderService.update(order);
+                                wxOrderService.update(updateOrder);
                             }
                         }
                         resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
@@ -182,10 +183,10 @@ public class WxOrderController extends JsonResultController {
     @RequestMapping(value = "/updateOrderStatus", method = RequestMethod.POST)
     public ResultValue updateOrderStatus(HttpServletRequest request, HttpServletResponse response, @RequestBody Order order) {
         try {
-            if (order.getId() == null) {
+            if (StringUtils.isEmpty(order.getOutTradeNo())) {
                 return errorResult(ResponseCode.BADREQUESTPARAM.getCode(), ResponseCode.BADREQUESTPARAM.getMsg());
             }
-            OrderDto orderDto = wxOrderService.queryByOrderId(order.getId());
+            Order orderDto = wxOrderService.queryOrderByOutTradeNo(order.getOutTradeNo());
             if (orderDto == null) {
                 return errorResult(ResponseCode.NODATA.getCode(), ResponseCode.NODATA.getMsg());
             }
@@ -193,16 +194,16 @@ public class WxOrderController extends JsonResultController {
             if (orderDto.getStatus() == Constants.UNPAID) {
                 Date payTime = new Date();
                 Order updateOrder = new Order();
-                updateOrder.setId(order.getId());
+                updateOrder.setId(orderDto.getId());
                 // 状态修改为待使用
                 updateOrder.setStatus(Constants.UNUSED);
                 updateOrder.setPayTime(payTime);
                 updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
-                wxOrderService.update(order);
+                wxOrderService.update(updateOrder);
             }
             return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
-            log.error("getOrderInfo fail {}", e);
+            log.error("updateOrderStatus fail {}", e);
             return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }

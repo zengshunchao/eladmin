@@ -89,6 +89,8 @@ public class WxOrderServiceImpl implements WxOrderService {
                 order.setWxUserId(orderDto.getWxUserId());
                 order.setMoney(orderDto.getMoney());
                 map = wxPayService.unifiedOrder(request, order);
+                // 统一下单成功则将订单商户号一并返回
+                map.put("outTradeNo", out_trade_no);
                 return map;
             }
 
@@ -127,6 +129,9 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 本地添加成功就调用微信统一下单接口
         if (resultNum != 0) {
             map = wxPayService.unifiedOrder(request, order);
+            if (map != null) {
+                map.put("outTradeNo", out_trade_no);
+            }
         }
         return map;
     }
@@ -190,6 +195,7 @@ public class WxOrderServiceImpl implements WxOrderService {
 
     /**
      * 推广订单
+     *
      * @param orderDto
      * @return
      */
@@ -206,13 +212,8 @@ public class WxOrderServiceImpl implements WxOrderService {
         return orderDtos;
     }
 
-    @Override
-    public OrderDto queryByOrderId(Long id) {
-        return orderDao.queryById(id);
-    }
-
     //查询订单课程详细信息
-    private void courseInfoForOrder(OrderDto orderDto){
+    private void courseInfoForOrder(OrderDto orderDto) {
         List<OrderCourseRelDto> courseList = new ArrayList<>();
         // 根据订单id查询订单关联的课程信息
         OrderCourseRel orderCourseRel = new OrderCourseRel();
