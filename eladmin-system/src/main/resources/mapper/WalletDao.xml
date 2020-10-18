@@ -15,7 +15,7 @@
     <select id="queryById" resultMap="WalletMap">
         select
           id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
-        from study.t_wallet
+        from t_wallet
         where id = #{id}
     </select>
 
@@ -23,7 +23,7 @@
     <select id="queryAllByLimit" resultMap="WalletMap">
         select
           id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
-        from study.t_wallet
+        from t_wallet
         limit #{offset}, #{limit}
     </select>
 
@@ -31,7 +31,7 @@
     <select id="queryAll" resultMap="WalletMap">
         select
         id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
-        from study.t_wallet
+        from t_wallet
         <where>
             <if test="id != null">
                 and id = #{id}
@@ -56,19 +56,19 @@
     <select id="queryByWxUserId" resultMap="WalletMap">
         select
           id, wx_user_id, all_money, cash_money, may_cash_money, lock_money
-        from study.t_wallet
+        from t_wallet
         where wx_user_id = #{wxUserId}
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into study.t_wallet(wx_user_id, all_money, cash_money, may_cash_money, lock_money)
+        insert into t_wallet(wx_user_id, all_money, cash_money, may_cash_money, lock_money)
         values (#{wxUserId}, #{allMoney}, #{cashMoney}, #{mayCashMoney}, #{lockMoney})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
-        update study.t_wallet
+        update t_wallet
         <set>
             <if test="wxUserId != null">
                 wx_user_id = #{wxUserId},
@@ -91,7 +91,7 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from study.t_wallet where id = #{id}
+        delete from t_wallet where id = #{id}
     </delete>
 
 </mapper>
