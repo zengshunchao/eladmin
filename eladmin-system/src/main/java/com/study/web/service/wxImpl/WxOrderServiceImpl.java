@@ -212,6 +212,17 @@ public class WxOrderServiceImpl implements WxOrderService {
         return orderDtos;
     }
 
+    /**
+     * 根据用户和课程查询订单数量
+     * @param wxUserId
+     * @param courseId
+     * @return
+     */
+    @Override
+    public Integer countOrderByCourseAndUser(Long wxUserId,Long courseId) {
+        return orderDao.countOrderByCourseAndUser(wxUserId,courseId);
+    }
+
     //查询订单课程详细信息
     private void courseInfoForOrder(OrderDto orderDto) {
         List<OrderCourseRelDto> courseList = new ArrayList<>();

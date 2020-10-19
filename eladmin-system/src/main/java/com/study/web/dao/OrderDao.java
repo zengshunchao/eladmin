@@ -2,6 +2,7 @@ package com.study.web.dao;
 
 import com.study.web.dto.BackGroundOrderInfoDto;
 import com.study.web.dto.BackGroundOrderQueryDto;
+import com.study.web.dto.OrderCourseRelDto;
 import com.study.web.dto.OrderDto;
 import com.study.web.entity.Order;
 import org.apache.ibatis.annotations.Param;
@@ -125,4 +126,9 @@ public interface OrderDao {
      * @return
      */
     List<BackGroundOrderInfoDto> queryAllOrder();
+
+    /**
+     * 根据用户和课程查询订单数量
+     */
+    Integer countOrderByCourseAndUser(@Param("wxUserId") Long wxUserId, @Param("courseId") Long courseId);
 }

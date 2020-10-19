@@ -3,6 +3,7 @@ package com.study.web.wxApi;
 
 import com.study.config.WxConfig;
 import com.study.utils.OrderCodeUtil;
+import com.study.web.dto.OrderCourseRelDto;
 import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
 import com.study.web.dto.ResultValue;
@@ -204,6 +205,21 @@ public class WxOrderController extends JsonResultController {
             return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
             log.error("updateOrderStatus fail {}", e);
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+        }
+    }
+
+    @ApiOperation("微信-根据用户和课程查询订单数量")
+    @RequestMapping(value = "/countOrderByCourseAndUser", method = RequestMethod.GET)
+    public ResultValue countOrderByCourseAndUser(HttpServletRequest request, HttpServletResponse response, Long wxUserId,Long courseId) {
+        try {
+            if(null == wxUserId || null == courseId){
+                return errorResult(ResponseCode.BADREQUESTPARAM.getCode(), ResponseCode.BADREQUESTPARAM.getMsg());
+            }
+            Integer count = wxOrderService.countOrderByCourseAndUser(wxUserId,courseId);
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), count);
+        } catch (Exception e) {
+            log.error("getOrderInfo fail {}", e);
             return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }

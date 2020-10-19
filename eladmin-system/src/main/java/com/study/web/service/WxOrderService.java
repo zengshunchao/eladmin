@@ -1,5 +1,6 @@
 package com.study.web.service;
 
+import com.study.web.dto.OrderCourseRelDto;
 import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
 import com.study.web.entity.Order;
@@ -83,4 +84,12 @@ public interface WxOrderService {
      */
     List<OrderDto> getShareOrderList(OrderDto orderDto);
 
+
+    /**
+     * 根据用户和课程查询订单数量
+     * @param wxUserId
+     * @param courseId
+     * @return
+     */
+    Integer countOrderByCourseAndUser(Long wxUserId,Long courseId);
 }

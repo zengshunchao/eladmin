@@ -4,9 +4,11 @@ import com.study.web.dao.DistributionDao;
 import com.study.web.dto.DistributionDto;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
+import com.study.web.entity.Share;
 import com.study.web.entity.Wallet;
 import com.study.web.entity.WxUser;
 import com.study.web.service.WxDistributionService;
+import com.study.web.service.WxShareService;
 import com.study.web.service.WxUserService;
 import com.study.web.service.WxWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ public class WxDistributionServiceImpl implements WxDistributionService {
 
     @Autowired
     private WxUserService wxUserService;
+
+    @Autowired
+    private WxShareService wxShareService;
 
     /**
      * 通过ID查询单条数据
@@ -108,7 +113,7 @@ public class WxDistributionServiceImpl implements WxDistributionService {
         Distribution temp = distributionDao.queryByWxUserId(distribution.getWxUserId());
         if (null == temp) {
             distributionDao.insert(distribution);
-            //添加钱包信息
+            //初始化钱包信息
             BigDecimal zero = new BigDecimal(0);
             Wallet wallet = wxWalletService.queryByWxUserId(distribution.getWxUserId());
             if(null == wallet){
@@ -116,6 +121,12 @@ public class WxDistributionServiceImpl implements WxDistributionService {
                 wxWalletService.insert(wallet);
             }
 
+            //初始化分享信息
+            //分销员的分享人只能是自己
+            Share share = new Share();
+            share.setShareId(distribution.getWxUserId());
+            share.setWxUserId(distribution.getWxUserId());
+            wxShareService.update(share);
         }
     }
 
