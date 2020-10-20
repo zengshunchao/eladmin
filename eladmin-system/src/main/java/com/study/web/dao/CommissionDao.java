@@ -81,6 +81,12 @@ public interface CommissionDao {
     int totalList(CommissionDto commissionDto);
 
     /**
+     *  根据订单id查询佣金记录
+     * @param orderId
+     * @return
+     */
+    List<Commission> queryByOrderId(Long orderId);
+    /**
      * 根据解锁时间查询未解锁佣金记录
      * @param lockTime
      * @return

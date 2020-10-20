@@ -2,7 +2,10 @@ package com.study.web.quartz;
 
 import cn.hutool.core.date.DateTime;
 import com.study.web.entity.Commission;
+import com.study.web.entity.Order;
 import com.study.web.service.WxCommissionService;
+import com.study.web.service.WxOrderService;
+import com.study.web.util.Constants;
 import com.study.web.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,8 @@ public class MyTask {
 
     @Autowired
     WxCommissionService wxCommissionService;
+    @Autowired
+    private WxOrderService wxOrderService;
 
     /**
      * 系统启动后5秒执行一次
@@ -39,23 +44,48 @@ public class MyTask {
      *
      * @throws Exception
      */
-    @Scheduled(initialDelay=1000,fixedDelay=60L*60*1000)
-    public void CommissionTask() throws Exception {
+    @Scheduled(initialDelay = 5000, fixedDelay = 60L * 60 * 1000)
+    public void commissionTask() throws Exception {
 
-        String dateStr = TimeUtil.afterTime(new Date(),TimeUtil.MINUTE,"yyyy-MM-dd HH:mm:ss",60);
+        String dateStr = TimeUtil.afterTime(new Date(), TimeUtil.MINUTE, "yyyy-MM-dd HH:mm:ss", 60);
         //获取65分钟内解锁的佣金
         List<Commission> list = wxCommissionService.queryListByLockTime(dateStr);
 
-        if(null!=list && list.size()>0){
+        if (null != list && list.size() > 0) {
             for (Commission commission : list) {
-                if(commission.getLockStatus() == 0){
-                    Map<String,Object> map = new HashMap<>();
-                    map.put("commissionId",commission.getId());
-                    map.put("wxUserId",commission.getWxUserId());
+                if (commission.getLockStatus() == 0) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("commissionId", commission.getId());
                     String cron = TimeUtil.transCorn(commission.getLockTime());
-                    quartzManager.addJob(""+commission.getId(), "动态任务触发器", ""+commission.getId(), "COMMISSION_JOB_GROUP", CommissionJob.class, cron,map);
+                    quartzManager.addJob("" + commission.getId(), "动态佣金任务触发器", "" + commission.getId(), "COMMISSION_JOB_GROUP", CommissionJob.class, cron, map);
                 }
             }
         }
     }
+
+    /**
+     * 系统启动后10秒执行一次
+     * 每小时执行一次
+     * 取消未支付的订单自动任务
+     *
+     * @throws Exception
+     */
+    @Scheduled(initialDelay = 10000, fixedDelay = 25L * 60 * 1000)
+    public void orderTask() throws Exception {
+
+        // 查询所有未支付的订单
+        List<Order> orders = wxOrderService.queryAllByQuartz();
+        if (null != orders && orders.size() > 0) {
+            for (Order order : orders) {
+                if (order.getStatus() == Constants.UNPAID) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("orderId", order.getId());
+                    String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getCreateTime(), TimeUtil.MINUTE, 30));
+                    quartzManager.addJob(String.valueOf(order.getId()), "动态订单任务触发器",
+                            String.valueOf(order.getId()), "ORDER_JOB_GROUP", OrderJob.class, cron, map);
+                }
+            }
+        }
+    }
+
 }

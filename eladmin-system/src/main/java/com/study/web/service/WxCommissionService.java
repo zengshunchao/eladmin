@@ -68,7 +68,7 @@ public interface WxCommissionService {
     int totalList(CommissionDto commissionDto);
 
     /**
-     * 修改佣金解锁状态
+     * 修改佣金解锁状态并计算用户钱包金额
      * @param id
      */
     void updateLockStatus(Long id);

@@ -1,5 +1,6 @@
 package com.study.web.service.impl;
 
+import com.study.utils.ElAdminConstant;
 import com.study.utils.SecurityUtils;
 import com.study.web.dto.CourseInfoDto;
 import com.study.web.dto.CourseQueryDto;
@@ -63,12 +64,11 @@ public class CourseServiceImpl implements CourseService {
      * @return 实例对象
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Course insert(Course course, MultipartFile[] coverFile, MultipartFile[] courseInfoFile, HttpServletRequest request) {
 
         // 存储图片预览地址
-        String serverIPPort = ServerUtil.getServerIPPort(request);
-        serverIPPort = serverIPPort + "/file/image/";
+        String serverIPPort = getServerPath(request);
         // 保存课程
         String currentUsername = SecurityUtils.getCurrentUsername();
         course.setCreateUser(currentUsername);
@@ -246,5 +246,18 @@ public class CourseServiceImpl implements CourseService {
         } else {
             return "";
         }
+    }
+
+    private String getServerPath(HttpServletRequest request){
+        // 存储图片预览地址
+        String serverIPPort = ServerUtil.getServerIPPort(request);
+        serverIPPort = serverIPPort + "/file/image/";
+        String os = System.getProperty("os.name");
+        if(os.toLowerCase().startsWith(ElAdminConstant.WIN)) {
+            return serverIPPort;
+        } else if(os.toLowerCase().startsWith(ElAdminConstant.MAC)){
+            return "https://tomuchlove:8000/file/image/";
+        }
+        return "https://tomuchlove:8000/file/image/";
     }
 }

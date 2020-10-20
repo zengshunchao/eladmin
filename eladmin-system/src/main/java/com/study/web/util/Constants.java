@@ -64,4 +64,27 @@ public class Constants {
      * 订单状态-已取消
      */
     public static final int CANCELED = 4;
+
+    /**
+     * 佣金锁定状态 0 锁定 1 解锁
+     */
+    public static final int COMMISSION_LOCK_STATUS_YES = 0;
+    public static final int COMMISSION_LOCK_STATUS_NO = 1;
+
+    /**
+     * 佣金百分比-字典表key
+     */
+    public static final String COMMISSION_DICT_KEY = "commission_percent";
+
+    /**
+     * 佣金解锁时间
+     */
+    public static final String COMMISSION_DICT_LOCK_TIME_KEY = "commission_lock_time";
+
+    /**
+     * 钱包流水定义 1-收入 2-支出 3-其他
+     */
+    public static final int WALLET_WATER_INCOME = 1;
+    public static final int WALLET_WATER_EXPEND = 2;
+    public static final int WALLET_WATER_OTHER = 3;
 }

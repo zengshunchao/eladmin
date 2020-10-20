@@ -7,14 +7,13 @@ import com.study.web.dto.CourseInfoDto;
 import com.study.web.dto.OrderCourseRelDto;
 import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
-import com.study.web.entity.Order;
-import com.study.web.entity.OrderCourseRel;
-import com.study.web.entity.Picture;
-import com.study.web.entity.WxUser;
+import com.study.web.entity.*;
 import com.study.web.service.WxOrderService;
+import com.study.web.service.WxWalletService;
+import com.study.web.service.WxWalletWaterService;
 import com.study.web.util.Constants;
+import com.study.web.util.TimeUtil;
 import com.study.web.wxPaySdk.WXPayUtil;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +46,16 @@ public class WxOrderServiceImpl implements WxOrderService {
     private WxUserDao wxUserDao;
     @Autowired
     private WxPayService wxPayService;
+    @Autowired
+    private DictDao dictDao;
+    @Autowired
+    private DistributionDao distributionDao;
+    @Autowired
+    private CommissionDao commissionDao;
+    @Autowired
+    private WxWalletService wxWalletService;
+    @Autowired
+    private WxWalletWaterService wxWalletWaterService;
 
     /**
      * 查询多条数据
@@ -178,10 +187,6 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 订单id查询订单详情
         OrderDto orderDto = orderDao.queryById(order.getId());
         if (orderDto != null) {
-            // 查询订单购买人姓名和手机号
-            WxUser buyUser = wxUserDao.queryById(orderDto.getWxUserId());
-            orderDto.setRealName(buyUser.getRealName());
-            orderDto.setPhone(buyUser.getPhone());
             courseInfoForOrder(orderDto);
 
         }
@@ -212,15 +217,78 @@ public class WxOrderServiceImpl implements WxOrderService {
         return orderDtos;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateOrderAndSaveCommission(Order order) {
+        // 修改订单状态
+        orderDao.update(order);
+
+        // 查询佣金记录,若佣金记录为空则计算佣金
+        List<Commission> commissions = commissionDao.queryByOrderId(order.getId());
+        if (null == commissions || commissions.size() == 0) {
+            // 根据订单id查询关联的课程，获取分享人id
+            OrderCourseRel orderCourseRel = new OrderCourseRel();
+            orderCourseRel.setOrderId(order.getId());
+            List<OrderCourseRel> orderCourseRels = orderCourseRelDao.queryAll(orderCourseRel);
+            if (orderCourseRels != null && orderCourseRels.size() != 0) {
+                // 因一个订单下的分享人id是相同的，则直接取第一条
+                OrderCourseRel courseRel = orderCourseRels.get(0);
+
+                // 判断分享人id是否为空
+                if (courseRel.getShareId() != null) {
+                    // 根据分享人id查询是否为分销员，不为空则表示为分销员
+                    Distribution distribution = distributionDao.queryByWxUserId(courseRel.getShareId());
+                    if (distribution != null) {
+                        // 计算佣金总和
+                        Double sumCommission = orderDao.sumCommission(order.getId());
+                        // 计算佣金解锁时间
+                        Dict dict = dictDao.queryByDictName(Constants.COMMISSION_DICT_LOCK_TIME_KEY);
+                        long currentTimeMillis = System.currentTimeMillis() + Long.valueOf(dict.getDictValue()) * 24 * 3600 * 1000;
+                        Date lockTime = TimeUtil.timeStampToDate(currentTimeMillis, "yyyy-MM-dd HH:mm:ss");
+                        // 插入佣金表
+                        Commission commission = new Commission(order.getId(), BigDecimal.valueOf(sumCommission),
+                                courseRel.getShareId(), courseRel.getShareId(), lockTime, Constants.COMMISSION_LOCK_STATUS_YES);
+                        commissionDao.insert(commission);
+                        // 修改用户钱包金额
+                        wxWalletService.updateWalletByCommission(commission);
+                        // 插入钱包流水
+                        WalletWater water = new WalletWater(commission.getWxUserId(), commission.getCommissionMoney(),
+                                Constants.WALLET_WATER_INCOME, "佣金收入");
+                        wxWalletWaterService.insert(water);
+                        // 上级分销员不为空则计算额外佣金
+                        if (distribution.getParentId() != null) {
+                            // 查询佣金计算的百分比
+                            Dict percentValue = dictDao.queryByDictName(Constants.COMMISSION_DICT_KEY);
+                            Double mul = CalculateUtil.mul(sumCommission, Double.valueOf(percentValue.getDictValue()));
+                            Commission parentCommission = new Commission(order.getId(), BigDecimal.valueOf(mul), distribution.getParentId(),
+                                    courseRel.getShareId(), lockTime, Constants.COMMISSION_LOCK_STATUS_YES);
+                            commissionDao.insert(parentCommission);
+                            wxWalletService.updateWalletByCommission(commission);
+                            WalletWater parentWater = new WalletWater(parentCommission.getWxUserId(), parentCommission.getCommissionMoney(),
+                                    Constants.WALLET_WATER_INCOME, "佣金收入");
+                            wxWalletWaterService.insert(parentWater);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 根据用户和课程查询订单数量
+     *
      * @param wxUserId
      * @param courseId
      * @return
      */
     @Override
-    public Integer countOrderByCourseAndUser(Long wxUserId,Long courseId) {
-        return orderDao.countOrderByCourseAndUser(wxUserId,courseId);
+    public Integer countOrderByCourseAndUser(Long wxUserId, Long courseId) {
+        return orderDao.countOrderByCourseAndUser(wxUserId, courseId);
+    }
+
+    @Override
+    public List<Order> queryAllByQuartz() {
+        return orderDao.queryAllByQuartz();
     }
 
     //查询订单课程详细信息

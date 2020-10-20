@@ -1,15 +1,19 @@
 package com.study.web.service.wxImpl;
 
 import com.study.web.dao.CommissionDao;
+import com.study.web.dao.WalletDao;
 import com.study.web.dto.CommissionDto;
 import com.study.web.entity.Commission;
+import com.study.web.entity.Wallet;
 import com.study.web.quartz.QuartzManager;
 import com.study.web.service.WxCommissionService;
+import com.study.web.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -26,6 +30,10 @@ public class WxCommissionServiceImpl implements WxCommissionService {
 
     @Autowired
     QuartzManager quartzManager;
+
+    @Autowired
+    private WalletDao walletDao;
+
     /**
      * 通过ID查询单条数据
      *
@@ -89,6 +97,7 @@ public class WxCommissionServiceImpl implements WxCommissionService {
 
     /**
      * 分页查询数据
+     *
      * @param commissionDto
      * @return
      */
@@ -99,6 +108,7 @@ public class WxCommissionServiceImpl implements WxCommissionService {
 
     /**
      * 总记录数
+     *
      * @param commissionDto
      * @return
      */
@@ -109,6 +119,7 @@ public class WxCommissionServiceImpl implements WxCommissionService {
 
     /**
      * 修改佣金解锁状态
+     *
      * @param id
      */
     @Override
@@ -116,17 +127,27 @@ public class WxCommissionServiceImpl implements WxCommissionService {
     public void updateLockStatus(Long id) {
         try {
             Commission commission = commissionDao.queryById(id);
-            if(null !=commission && commission.getLockStatus() == 0){
-                commission.setLockStatus(1);
+            if (null != commission && commission.getLockStatus() == 0) {
+                commission.setLockStatus(Constants.COMMISSION_LOCK_STATUS_NO);
                 commissionDao.update(commission);
+                // 修改钱包
+                Wallet wallet = walletDao.queryByWxUserId(commission.getWxUserId());
+                if (wallet != null) {
+                    BigDecimal mayCashMoney = wallet.getMayCashMoney().add(commission.getCommissionMoney());
+                    BigDecimal lockMoney = wallet.getLockMoney().subtract(commission.getCommissionMoney());
+                    wallet.setMayCashMoney(mayCashMoney);
+                    wallet.setLockMoney(lockMoney);
+                    walletDao.update(wallet);
+                }
             }
-        }catch (Exception e){
-            log.error("updateStatus fail {}", e);
+        } catch (Exception e) {
+            log.error("updateLockStatus fail {}", e);
         }
     }
 
     /**
      * 根据解锁时间查询未解锁佣金记录
+     *
      * @param lockTime
      * @return
      */

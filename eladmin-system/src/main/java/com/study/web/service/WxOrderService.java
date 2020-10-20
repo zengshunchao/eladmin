@@ -84,12 +84,26 @@ public interface WxOrderService {
      */
     List<OrderDto> getShareOrderList(OrderDto orderDto);
 
+    /**
+     * 修改订单状态并计算佣金
+     *
+     * @param order
+     */
+    void updateOrderAndSaveCommission(Order order);
 
     /**
      * 根据用户和课程查询订单数量
+     *
      * @param wxUserId
      * @param courseId
      * @return
      */
-    Integer countOrderByCourseAndUser(Long wxUserId,Long courseId);
+    Integer countOrderByCourseAndUser(Long wxUserId, Long courseId);
+
+    /**
+     * 定时-查询所有未支付的订单
+     *
+     * @return
+     */
+    List<Order> queryAllByQuartz();
 }

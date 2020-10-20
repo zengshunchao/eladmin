@@ -53,7 +53,6 @@ public class WxOrderController extends JsonResultController {
             if (resultMap == null) {
                 return successResult(ResponseCode.UNIFIEDORDER.getCode(), ResponseCode.UNIFIEDORDER.getMsg());
             }
-            System.out.println("统一下单接口返回参数到小程序\n" + jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), resultMap));
             return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), resultMap);
         } catch (Exception e) {
             log.error("unifiedOrder fail {}", e);
@@ -85,7 +84,7 @@ public class WxOrderController extends JsonResultController {
             List<OrderDto> orderList = wxOrderService.getShareOrderList(orderDto);
             return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), orderList);
         } catch (Exception e) {
-            log.error("getOrderList fail {}", e);
+            log.error("getShareOrderList fail {}", e);
             return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
@@ -152,7 +151,7 @@ public class WxOrderController extends JsonResultController {
                                 updateOrder.setStatus(Constants.UNUSED);
                                 updateOrder.setPayTime(payTime);
                                 updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
-                                wxOrderService.update(updateOrder);
+                                wxOrderService.updateOrderAndSaveCommission(updateOrder);
                             }
                         }
                         resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
@@ -200,7 +199,7 @@ public class WxOrderController extends JsonResultController {
                 updateOrder.setStatus(Constants.UNUSED);
                 updateOrder.setPayTime(payTime);
                 updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
-                wxOrderService.update(updateOrder);
+                wxOrderService.updateOrderAndSaveCommission(updateOrder);
             }
             return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {

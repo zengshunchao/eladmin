@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -104,12 +105,16 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
         // 导出所有订单
         List<ExportOrderInfoDto> excelList = new ArrayList<>();
         if (backGroundOrderInfoDtos.size() != 0) {
-            backGroundOrderInfoDtos.stream().forEach(orderInfo -> {
+            Iterator iterator = backGroundOrderInfoDtos.iterator();
+            while (iterator.hasNext()) {
+                BackGroundOrderInfoDto orderInfo = (BackGroundOrderInfoDto) iterator.next();
                 queryCourseInfo(orderInfo);
                 ExportOrderInfoDto exportOrderInfoDto = new ExportOrderInfoDto();
+                String status = orderStatus(orderInfo.getStatus());
+                exportOrderInfoDto.setStatus(status);
                 BeanUtils.copyProperties(orderInfo, exportOrderInfoDto);
                 excelList.add(exportOrderInfoDto);
-            });
+            }
         }
         return excelList;
     }
@@ -154,6 +159,20 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
                     backGroundOrderInfoDto.setCoursePicturePath(coverPathList.get(0));
                 }
             }
+        }
+    }
+
+    private String orderStatus(Integer status) {
+        if (status == Constants.UNPAID) {
+            return "待支付";
+        } else if (status == Constants.UNUSED) {
+            return "待使用";
+        } else if (status == Constants.FINISHED) {
+            return "已完成";
+        } else if (status == Constants.CANCELED) {
+            return "已取消";
+        } else {
+            return "-";
         }
     }
 }

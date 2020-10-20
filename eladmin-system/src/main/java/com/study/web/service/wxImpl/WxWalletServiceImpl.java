@@ -3,6 +3,7 @@ package com.study.web.service.wxImpl;
 import com.study.web.dao.WalletDao;
 import com.study.web.dao.WalletWaterDao;
 import com.study.web.dto.WalletDto;
+import com.study.web.entity.Commission;
 import com.study.web.entity.Wallet;
 import com.study.web.entity.WalletWater;
 import com.study.web.service.WxWalletService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -94,22 +96,39 @@ public class WxWalletServiceImpl implements WxWalletService {
 
     /**
      * 提现
+     *
      * @param walletDto
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void withdrawal(WalletDto walletDto) throws Exception {
         Wallet wallet = this.walletDao.queryById(walletDto.getId());
-        if(null == wallet){
+        if (null == wallet) {
             throw new Exception("未查询到钱包");
         }
-        if(walletDto.getWithdrawal().compareTo(wallet.getMayCashMoney())>0){
+        if (walletDto.getWithdrawal().compareTo(wallet.getMayCashMoney()) > 0) {
             throw new Exception("提现金额异常");
         }
         wallet.setCashMoney(wallet.getCashMoney().add(walletDto.getWithdrawal()));
         wallet.setMayCashMoney(wallet.getMayCashMoney().subtract(walletDto.getWithdrawal()));
         walletDao.update(wallet);
         //添加流水信息
-        WalletWater water =  new WalletWater(walletDto.getWxUserId(),walletDto.getWithdrawal(),2,"提现");
+        WalletWater water = new WalletWater(walletDto.getWxUserId(), walletDto.getWithdrawal(), 2, "提现");
         walletWaterDao.insert(water);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateWalletByCommission(Commission commission) {
+        // 查询用户钱包
+        Wallet wallet = walletDao.queryByWxUserId(commission.getWxUserId());
+
+        if (wallet != null) {
+            BigDecimal allMoney = wallet.getAllMoney().add(commission.getCommissionMoney());
+            BigDecimal lockMoney = wallet.getLockMoney().add(commission.getCommissionMoney());
+            wallet.setAllMoney(allMoney);
+            wallet.setLockMoney(lockMoney);
+            walletDao.update(wallet);
+        }
     }
 }

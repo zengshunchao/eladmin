@@ -1,6 +1,7 @@
 package com.study.web.dto;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.Date;
  * @date 2020/10/17 0017 22:11
  */
 @Data
+@ExcelTarget("orderExcel")
 public class ExportOrderInfoDto {
 
     /**

@@ -49,4 +49,15 @@ public class Commission implements Serializable {
      */
     private Integer lockStatus;
 
+    public Commission() {
+    }
+
+    public Commission(Long orderId, BigDecimal commissionMoney, Long wxUserId, Long shareId, Date lockTime, Integer lockStatus) {
+        this.orderId = orderId;
+        this.commissionMoney = commissionMoney;
+        this.wxUserId = wxUserId;
+        this.shareId = shareId;
+        this.lockTime = lockTime;
+        this.lockStatus = lockStatus;
+    }
 }

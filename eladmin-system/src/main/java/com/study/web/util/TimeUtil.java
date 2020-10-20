@@ -38,6 +38,24 @@ public class TimeUtil {
     }
 
     /**
+     * 字符串转换成date
+     *
+     * @param timeStamp
+     * @param format
+     * @return
+     */
+    public static Date timeStampToDate(Long timeStamp, String format) {
+        Date date = null;
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+            String dateString = simpleDateFormat.format(timeStamp);
+            date = simpleDateFormat.parse(dateString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+    /**
      * 把日期转换为字符串
      *
      * @param date

@@ -21,15 +21,11 @@ public class CommissionJob extends QuartzJobBean implements Job {
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         //佣金id
         Long commissionId = (Long) jobExecutionContext.getMergedJobDataMap().get("commissionId");
-        Long wxUserId = (Long) jobExecutionContext.getMergedJobDataMap().get("wxUserId");
-        //修改佣金状态
+        //修改佣金状态并修改用户钱包
         wxCommissionService.updateLockStatus(commissionId);
 
-        //修改钱包
-
-
         //删除定时任务
-        quartzManager.removeJob(String.valueOf(jobExecutionContext.getMergedJobDataMap().get("commissionId")), "动态任务触发器", String.valueOf(jobExecutionContext.getMergedJobDataMap().get("commissionId")), "COMMISSION_JOB_GROUP");
+        quartzManager.removeJob(String.valueOf(jobExecutionContext.getMergedJobDataMap().get("commissionId")), "动态佣金任务触发器", String.valueOf(jobExecutionContext.getMergedJobDataMap().get("commissionId")), "COMMISSION_JOB_GROUP");
 
     }
 }

@@ -12,6 +12,6 @@ public class ServerUtil {
      */
     public static String getServerIPPort(HttpServletRequest request) {
 
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        return "https://" + request.getServerName() + ":" + request.getServerPort();
     }
 }

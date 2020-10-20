@@ -1,19 +1,19 @@
 package com.study.web.dao;
 
-import com.study.web.entity.Wallet;
-import org.apache.ibatis.annotations.Param;
+import com.study.web.entity.Dict;
 import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
- * 我的钱包(Wallet)表数据库访问层
+ * (Dict)表数据库访问层
  *
  * @author zengsc
- * @since 2020-10-09 16:38:42
+ * @since 2020-10-19 17:19:52
  */
 @Repository
-public interface WalletDao {
+public interface DictDao {
 
     /**
      * 通过ID查询单条数据
@@ -21,7 +21,7 @@ public interface WalletDao {
      * @param id 主键
      * @return 实例对象
      */
-    Wallet queryById(Long id);
+    Dict queryById(Long id);
 
     /**
      * 查询指定行数据
@@ -30,32 +30,32 @@ public interface WalletDao {
      * @param limit  查询条数
      * @return 对象列表
      */
-    List<Wallet> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
+    List<Dict> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
 
 
     /**
      * 通过实体作为筛选条件查询
      *
-     * @param wallet 实例对象
+     * @param dict 实例对象
      * @return 对象列表
      */
-    List<Wallet> queryAll(Wallet wallet);
+    List<Dict> queryAll(Dict dict);
 
     /**
      * 新增数据
      *
-     * @param wallet 实例对象
+     * @param dict 实例对象
      * @return 影响行数
      */
-    int insert(Wallet wallet);
+    int insert(Dict dict);
 
     /**
      * 修改数据
      *
-     * @param wallet 实例对象
+     * @param dict 实例对象
      * @return 影响行数
      */
-    int update(Wallet wallet);
+    int update(Dict dict);
 
     /**
      * 通过主键删除数据
@@ -66,9 +66,9 @@ public interface WalletDao {
     int deleteById(Long id);
 
     /**
-     *  查询微信用户钱包
-     * @param wxUserId
+     *  根据字典key查询
+     * @param dictName
      * @return
      */
-    Wallet queryByWxUserId(Long wxUserId);
+    Dict queryByDictName(@Param("dictName") String dictName);
 }

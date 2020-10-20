@@ -1,6 +1,7 @@
 package com.study.web.service;
 
 import com.study.web.dto.WalletDto;
+import com.study.web.entity.Commission;
 import com.study.web.entity.Wallet;
 
 import java.util.List;
@@ -63,4 +64,10 @@ public interface WxWalletService {
     Wallet queryByWxUserId(Long wxUserId);
 
     void withdrawal(WalletDto walletDto) throws Exception;
+
+    /**
+     *  根据佣金修改用户钱包
+     * @param commission
+     */
+    void updateWalletByCommission(Commission commission);
 }

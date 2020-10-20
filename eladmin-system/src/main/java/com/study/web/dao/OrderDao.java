@@ -128,7 +128,22 @@ public interface OrderDao {
     List<BackGroundOrderInfoDto> queryAllOrder();
 
     /**
+     * 根据订单id计算佣金总和
+     *
+     * @param orderId
+     * @return
+     */
+    Double sumCommission(Long orderId);
+
+    /**
      * 根据用户和课程查询订单数量
      */
     Integer countOrderByCourseAndUser(@Param("wxUserId") Long wxUserId, @Param("courseId") Long courseId);
+
+    /**
+     * 定时-查询所有待支付的订单
+     *
+     * @return
+     */
+    List<Order> queryAllByQuartz();
 }
