@@ -66,4 +66,17 @@ public interface WxCommissionService {
      * @return
      */
     int totalList(CommissionDto commissionDto);
+
+    /**
+     * 修改佣金解锁状态
+     * @param id
+     */
+    void updateLockStatus(Long id);
+
+    /**
+     * 根据解锁时间查询未解锁佣金记录
+     * @param lockTime
+     * @return
+     */
+    List<Commission> queryListByLockTime(String lockTime);
 }

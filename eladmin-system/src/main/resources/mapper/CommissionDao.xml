@@ -74,6 +74,13 @@
         from t_commission
         where wx_user_id = #{wxUserId}
     </select>
+    <select id="queryListByLockTime" resultType="com.study.web.entity.Commission">
+        select
+        id, lock_time, lock_status
+        from t_commission
+        where lock_status = 0
+        and #{endTime} >= lock_time
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

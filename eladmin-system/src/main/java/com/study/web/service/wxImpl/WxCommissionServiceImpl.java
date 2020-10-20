@@ -3,7 +3,9 @@ package com.study.web.service.wxImpl;
 import com.study.web.dao.CommissionDao;
 import com.study.web.dto.CommissionDto;
 import com.study.web.entity.Commission;
+import com.study.web.quartz.QuartzManager;
 import com.study.web.service.WxCommissionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +18,14 @@ import java.util.List;
  * @author zengsc
  * @since 2020-10-09 15:57:40
  */
+@Slf4j
 @Service
 public class WxCommissionServiceImpl implements WxCommissionService {
     @Autowired
     private CommissionDao commissionDao;
 
+    @Autowired
+    QuartzManager quartzManager;
     /**
      * 通过ID查询单条数据
      *
@@ -100,5 +105,33 @@ public class WxCommissionServiceImpl implements WxCommissionService {
     @Override
     public int totalList(CommissionDto commissionDto) {
         return commissionDao.totalList(commissionDto);
+    }
+
+    /**
+     * 修改佣金解锁状态
+     * @param id
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateLockStatus(Long id) {
+        try {
+            Commission commission = commissionDao.queryById(id);
+            if(null !=commission && commission.getLockStatus() == 0){
+                commission.setLockStatus(1);
+                commissionDao.update(commission);
+            }
+        }catch (Exception e){
+            log.error("updateStatus fail {}", e);
+        }
+    }
+
+    /**
+     * 根据解锁时间查询未解锁佣金记录
+     * @param lockTime
+     * @return
+     */
+    @Override
+    public List<Commission> queryListByLockTime(String lockTime) {
+        return commissionDao.queryListByLockTime(lockTime);
     }
 }

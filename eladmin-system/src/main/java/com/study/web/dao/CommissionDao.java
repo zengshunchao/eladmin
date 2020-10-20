@@ -80,4 +80,10 @@ public interface CommissionDao {
      */
     int totalList(CommissionDto commissionDto);
 
+    /**
+     * 根据解锁时间查询未解锁佣金记录
+     * @param lockTime
+     * @return
+     */
+    List<Commission> queryListByLockTime(String lockTime);
 }
