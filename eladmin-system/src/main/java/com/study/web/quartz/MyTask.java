@@ -39,10 +39,10 @@ public class MyTask {
      *
      * @throws Exception
      */
-    @Scheduled(initialDelay=5000,fixedDelay=60L*60*1000)
+    @Scheduled(initialDelay=1000,fixedDelay=60L*60*1000)
     public void CommissionTask() throws Exception {
 
-        String dateStr = TimeUtil.afterTime(new Date(),TimeUtil.MINUTE,"yyyy-MM-dd HH:mm:ss",65);
+        String dateStr = TimeUtil.afterTime(new Date(),TimeUtil.MINUTE,"yyyy-MM-dd HH:mm:ss",60);
         //获取65分钟内解锁的佣金
         List<Commission> list = wxCommissionService.queryListByLockTime(dateStr);
 
@@ -51,6 +51,7 @@ public class MyTask {
                 if(commission.getLockStatus() == 0){
                     Map<String,Object> map = new HashMap<>();
                     map.put("commissionId",commission.getId());
+                    map.put("wxUserId",commission.getWxUserId());
                     String cron = TimeUtil.transCorn(commission.getLockTime());
                     quartzManager.addJob(""+commission.getId(), "动态任务触发器", ""+commission.getId(), "COMMISSION_JOB_GROUP", CommissionJob.class, cron,map);
                 }
