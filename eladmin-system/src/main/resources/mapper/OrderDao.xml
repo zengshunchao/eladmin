@@ -296,6 +296,6 @@
         select
         <include refid="BaseSql"/>
         from t_order
-        where now() >= create_time and `status` = 1
+        where now() >= create_time and `status` = #{status}
     </select>
 </mapper>

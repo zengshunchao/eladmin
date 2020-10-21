@@ -103,7 +103,8 @@ public interface WxOrderService {
     /**
      * 定时-查询所有未支付的订单
      *
+     * @param status
      * @return
      */
-    List<Order> queryAllByQuartz();
+    List<Order> queryAllByQuartz(int status);
 }

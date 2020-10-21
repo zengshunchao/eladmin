@@ -141,9 +141,10 @@ public interface OrderDao {
     Integer countOrderByCourseAndUser(@Param("wxUserId") Long wxUserId, @Param("courseId") Long courseId);
 
     /**
-     * 定时-查询所有待支付的订单
+     * 定时-查询所有指定状态的订单
      *
+     * @param status 订单状态
      * @return
      */
-    List<Order> queryAllByQuartz();
+    List<Order> queryAllByQuartz(@Param("status") int status);
 }

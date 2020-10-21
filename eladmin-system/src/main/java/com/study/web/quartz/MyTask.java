@@ -1,7 +1,9 @@
 package com.study.web.quartz;
 
 import cn.hutool.core.date.DateTime;
+import com.study.web.dao.DictDao;
 import com.study.web.entity.Commission;
+import com.study.web.entity.Dict;
 import com.study.web.entity.Order;
 import com.study.web.service.WxCommissionService;
 import com.study.web.service.WxOrderService;
@@ -36,6 +38,8 @@ public class MyTask {
     WxCommissionService wxCommissionService;
     @Autowired
     private WxOrderService wxOrderService;
+    @Autowired
+    private DictDao dictDao;
 
     /**
      * 系统启动后5秒执行一次
@@ -74,7 +78,7 @@ public class MyTask {
     public void orderTask() throws Exception {
 
         // 查询所有未支付的订单
-        List<Order> orders = wxOrderService.queryAllByQuartz();
+        List<Order> orders = wxOrderService.queryAllByQuartz(Constants.UNPAID);
         if (null != orders && orders.size() > 0) {
             for (Order order : orders) {
                 if (order.getStatus() == Constants.UNPAID) {

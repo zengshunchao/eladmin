@@ -87,4 +87,9 @@ public class Constants {
     public static final int WALLET_WATER_INCOME = 1;
     public static final int WALLET_WATER_EXPEND = 2;
     public static final int WALLET_WATER_OTHER = 3;
+
+    /**
+     *  订单自动核销时间
+     */
+    public static final String AUTO_CHECK_TIME_KEY = "auto_check_time";
 }

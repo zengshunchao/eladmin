@@ -178,7 +178,7 @@ public class CourseServiceImpl implements CourseService {
     public void updateLineType(Long id) {
         // 查询当前课程状态
         CourseInfoDto courseInfo = courseDao.queryById(id);
-        if (ObjectUtils.allNotNull(courseInfo)) {
+        if (courseInfo != null) {
             Course course = new Course();
             course.setId(id);
             Date date = new Date();
@@ -248,14 +248,14 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    private String getServerPath(HttpServletRequest request){
+    private String getServerPath(HttpServletRequest request) {
         // 存储图片预览地址
         String serverIPPort = ServerUtil.getServerIPPort(request);
         serverIPPort = serverIPPort + "/file/image/";
         String os = System.getProperty("os.name");
-        if(os.toLowerCase().startsWith(ElAdminConstant.WIN)) {
+        if (os.toLowerCase().startsWith(ElAdminConstant.WIN)) {
             return serverIPPort;
-        } else if(os.toLowerCase().startsWith(ElAdminConstant.MAC)){
+        } else if (os.toLowerCase().startsWith(ElAdminConstant.MAC)) {
             return "https://tomuchlove:8000/file/image/";
         }
         return "https://tomuchlove:8000/file/image/";

@@ -218,7 +218,7 @@ public class WxOrderController extends JsonResultController {
             Integer count = wxOrderService.countOrderByCourseAndUser(wxUserId,courseId);
             return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), count);
         } catch (Exception e) {
-            log.error("getOrderInfo fail {}", e);
+            log.error("countOrderByCourseAndUser fail {}", e);
             return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }

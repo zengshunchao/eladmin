@@ -8,6 +8,8 @@ import com.study.web.dto.OrderCourseRelDto;
 import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
 import com.study.web.entity.*;
+import com.study.web.quartz.OrderJob;
+import com.study.web.quartz.QuartzManager;
 import com.study.web.service.WxOrderService;
 import com.study.web.service.WxWalletService;
 import com.study.web.service.WxWalletWaterService;
@@ -21,10 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 订单表(Order)表服务实现类
@@ -56,6 +57,8 @@ public class WxOrderServiceImpl implements WxOrderService {
     private WxWalletService wxWalletService;
     @Autowired
     private WxWalletWaterService wxWalletWaterService;
+    @Autowired
+    QuartzManager quartzManager;
 
     /**
      * 查询多条数据
@@ -263,7 +266,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                             Commission parentCommission = new Commission(order.getId(), BigDecimal.valueOf(mul), distribution.getParentId(),
                                     courseRel.getShareId(), lockTime, Constants.COMMISSION_LOCK_STATUS_YES);
                             commissionDao.insert(parentCommission);
-                            wxWalletService.updateWalletByCommission(commission);
+                            wxWalletService.updateWalletByCommission(parentCommission);
                             WalletWater parentWater = new WalletWater(parentCommission.getWxUserId(), parentCommission.getCommissionMoney(),
                                     Constants.WALLET_WATER_INCOME, "佣金收入");
                             wxWalletWaterService.insert(parentWater);
@@ -272,6 +275,8 @@ public class WxOrderServiceImpl implements WxOrderService {
                 }
             }
         }
+        // 添加定时任务
+        addOrderTask(order);
     }
 
     /**
@@ -287,8 +292,8 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
     @Override
-    public List<Order> queryAllByQuartz() {
-        return orderDao.queryAllByQuartz();
+    public List<Order> queryAllByQuartz(int status) {
+        return orderDao.queryAllByQuartz(status);
     }
 
     //查询订单课程详细信息
@@ -320,5 +325,22 @@ public class WxOrderServiceImpl implements WxOrderService {
             }
             orderDto.setCourseList(courseList);
         }
+    }
+
+    /**
+     *  添加定时任务
+     * @param order
+     */
+    private void addOrderTask(Order order) {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(() -> {
+            Dict dict = dictDao.queryByDictName(Constants.AUTO_CHECK_TIME_KEY);
+            Map<String, Object> jobMap = new HashMap<>();
+            jobMap.put("orderId", order.getId());
+            String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getPayTime(),
+                    TimeUtil.DAY, Integer.valueOf(dict.getDictValue())));
+            quartzManager.addJob(String.valueOf(order.getId()), "动态订单自动核销任务触发器",
+                    String.valueOf(order.getId()), "ORDER_AUTO_CHECK_JOB_GROUP", OrderJob.class, cron, jobMap);
+        });
     }
 }
