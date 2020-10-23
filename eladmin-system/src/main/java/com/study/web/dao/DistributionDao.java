@@ -1,5 +1,6 @@
 package com.study.web.dao;
 
+import com.study.web.dto.BackGroundDistributionInfoDto;
 import com.study.web.dto.DistributionDto;
 import com.study.web.dto.WxUserDto;
 import com.study.web.entity.Distribution;
@@ -71,6 +72,7 @@ public interface DistributionDao {
 
     /**
      * 下级分销员
+     *
      * @param distributionDto
      * @return
      */
@@ -78,8 +80,25 @@ public interface DistributionDao {
 
     /**
      * 总记录数
+     *
      * @param distributionDto
      * @return
      */
     int totalList(DistributionDto distributionDto);
+
+    /**
+     * 分销管理-分销列表
+     *
+     * @param startNum
+     * @param pageSize
+     * @return
+     */
+    List<BackGroundDistributionInfoDto> queryAllDistribution(BackGroundDistributionInfoDto backGroundDistributionInfoDto, @Param("startNum") int startNum, @Param("pageSize") int pageSize);
+
+    /**
+     * 后台-分销管理统计
+     *
+     * @return
+     */
+    int backGroundQueryDistributionTotal(BackGroundDistributionInfoDto backGroundDistributionInfoDto);
 }

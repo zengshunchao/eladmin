@@ -9,6 +9,16 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="BaseResultMap" type="com.study.web.dto.BackGroundDistributionInfoDto">
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="parentNickName" column="parent_nick_name" jdbcType="VARCHAR"/>
+        <result property="distributionNumber" column="distribution_number" jdbcType="VARCHAR"/>
+        <result property="orderNumber" column="order_number" jdbcType="VARCHAR"/>
+        <result property="allMoney" column="all_money" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
     <!--查询单个-->
     <select id="queryById" resultMap="DistributionMap">
         select
@@ -98,4 +108,39 @@
         delete from t_distribution where id = #{id}
     </delete>
 
+    <select id="queryAllDistribution" resultMap="BaseResultMap">
+        select t2.nick_name,t2.phone,(SELECT t8.nick_name FROM t_wx_user t8 WHERE t8.id = t1.parent_id) as
+        parent_nick_name,
+        (SELECT count(1) from t_distribution t3 WHERE t3.parent_id = t1.wx_user_id) as distribution_number,
+        (SELECT count(DISTINCT t4.order_id) from t_order_course_rel t4 inner join t_order t5 on t4.order_id = t5.id and
+        t5.`status` in (2,3) where t4.share_id = t1.wx_user_id ) order_number,
+        t6.all_money,t1.create_time
+        from t_distribution t1
+        left join t_wx_user t2 on t1.wx_user_id = t2.id
+        left join t_wallet t6 on t1.wx_user_id = t6.wx_user_id
+        <where>
+            <if test="backGroundDistributionInfoDto.nickName != null and backGroundDistributionInfoDto.nickName !=''">
+                and t2.nick_name like concat('%',#{backGroundDistributionInfoDto.nickName},'%')
+            </if>
+            <if test="backGroundDistributionInfoDto.phone != null and backGroundDistributionInfoDto.phone !=''">
+                and t2.phone like concat('%',#{backGroundDistributionInfoDto.phone},'%')
+            </if>
+        </where>
+        limit #{startNum},#{pageSize}
+    </select>
+
+    <select id="backGroundQueryDistributionTotal" resultType="java.lang.Integer">
+        select count(1)
+        from t_distribution t1
+        left join t_wx_user t2 on t1.wx_user_id = t2.id
+        left join t_wallet t6 on t1.wx_user_id = t6.wx_user_id
+        <where>
+            <if test="nickName != null and nickName !=''">
+                and t2.nick_name like concat('%',#{nickName},'%')
+            </if>
+            <if test="phone != null and phone !=''">
+                and t2.phone like concat('%',#{phone},'%')
+            </if>
+        </where>
+    </select>
 </mapper>

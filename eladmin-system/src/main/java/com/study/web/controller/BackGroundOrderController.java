@@ -59,6 +59,7 @@ public class BackGroundOrderController {
 
     @ApiOperation("查看订单详情")
     @GetMapping("/getOrderById/{id}")
+    @PreAuthorize("@el.check('order:search')")
     public ResponseEntity<Object> getOrderById(@PathVariable("id") Long id) {
         try {
             BackGroundOrderInfoDto backGroundOrderInfoDto = backGroundOrderService.queryOrderById(id);
@@ -71,6 +72,7 @@ public class BackGroundOrderController {
 
     @ApiOperation("订单核销")
     @GetMapping("/updateCheckCode/{id}")
+    @PreAuthorize("@el.check('order:check')")
     public ResponseEntity<Object> updateCheckCode(@PathVariable("id") Long id) {
         try {
             if (id == null) {
@@ -94,6 +96,7 @@ public class BackGroundOrderController {
      */
     @ApiOperation("导出订单")
     @GetMapping("/exportExcel")
+    @PreAuthorize("@el.check('order:export')")
     public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
         // 查询订单
         List<ExportOrderInfoDto> exportOrderInfoDtos = backGroundOrderService.exportOrderExcel();
@@ -103,7 +106,7 @@ public class BackGroundOrderController {
         try {
             workbook.write(os);
             byte[] bytes = os.toByteArray();
-            String fileName = URLEncoder.encode("订单统计.xls", "utf-8");
+            String fileName = URLEncoder.encode("订单统计.xlsx", "utf-8");
             response.setHeader("Content-disposition", "attachment;filename=" + fileName);
             response.getOutputStream().write(bytes);
             response.getOutputStream().flush();
