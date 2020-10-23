@@ -355,9 +355,10 @@ public class WxOrderServiceImpl implements WxOrderService {
     private void addCancelOrderTask(Order order){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
+            Dict dict = dictDao.queryByDictName(Constants.AUTO_CANCEL_ORDER_TIME);
             Map<String, Object> map = new HashMap<>();
             map.put("orderId", order.getId());
-            String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getCreateTime(), TimeUtil.MINUTE, 1));
+            String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getCreateTime(), TimeUtil.MINUTE, Integer.valueOf(dict.getDictValue())));
             quartzManager.addJob(String.valueOf(order.getId()), "动态订单任务触发器",
                     String.valueOf(order.getId()), "ORDER_JOB_GROUP", OrderJob.class, cron, map);
         });

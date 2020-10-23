@@ -92,4 +92,9 @@ public class Constants {
      *  订单自动核销时间
      */
     public static final String AUTO_CHECK_TIME_KEY = "auto_check_time";
+
+    /**
+     * 自动取消未支付订单
+     */
+    public static final String AUTO_CANCEL_ORDER_TIME = "auto_cancel_order_time";
 }
