@@ -35,7 +35,7 @@ public class AutoCheckOrderJob extends QuartzJobBean implements Job {
             orderDao.update(order);
         }
         //删除定时任务
-        quartzManager.removeJob(String.valueOf(jobExecutionContext.getMergedJobDataMap().get("orderId")), "动态订单任务触发器",
+        quartzManager.removeJob(String.valueOf(jobExecutionContext.getMergedJobDataMap().get("orderId")), "动态订单自动核销任务触发器",
                 String.valueOf(jobExecutionContext.getMergedJobDataMap().get("orderId")), "ORDER_AUTO_CHECK_JOB_GROUP");
 
     }

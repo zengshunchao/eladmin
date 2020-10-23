@@ -41,8 +41,10 @@ public class WxWalletController extends JsonResultController{
     @RequestMapping(value = "withdrawal", method = RequestMethod.POST)
     public ResultValue withdrawal(@RequestBody WalletDto walletDto){
         try {
-            wxWalletService.withdrawal(walletDto);
-            return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
+            //wxWalletService.withdrawal(walletDto);
+            //return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
+
+            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         } catch (Exception e) {
             log.error("getWallet fail {}", e);
             return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());

@@ -7,6 +7,7 @@ import com.study.web.entity.Commission;
 import com.study.web.entity.Wallet;
 import com.study.web.entity.WalletWater;
 import com.study.web.service.WxWalletService;
+import com.study.web.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,8 +114,12 @@ public class WxWalletServiceImpl implements WxWalletService {
         wallet.setMayCashMoney(wallet.getMayCashMoney().subtract(walletDto.getWithdrawal()));
         walletDao.update(wallet);
         //添加流水信息
-        WalletWater water = new WalletWater(walletDto.getWxUserId(), walletDto.getWithdrawal(), 2, "提现");
+        WalletWater water = new WalletWater(walletDto.getWxUserId(), walletDto.getWithdrawal(), Constants.WALLET_WATER_INCOME, "佣金提现");
         walletWaterDao.insert(water);
+
+        //TODO
+        // 微信提现请求
+        //
     }
 
     @Override

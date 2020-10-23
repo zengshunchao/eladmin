@@ -8,6 +8,7 @@ import com.study.web.dto.OrderCourseRelDto;
 import com.study.web.dto.OrderDto;
 import com.study.web.dto.OrderInfoDto;
 import com.study.web.entity.*;
+import com.study.web.quartz.AutoCheckOrderJob;
 import com.study.web.quartz.OrderJob;
 import com.study.web.quartz.QuartzManager;
 import com.study.web.service.WxOrderService;
@@ -132,6 +133,9 @@ public class WxOrderServiceImpl implements WxOrderService {
         order.setOrderNumber(OrderCodeUtil.getOrderCodeV2(orderInfoDto.getWxUserId()));
         order.setCreateTime(new Date());
         int resultNum = orderDao.insert(order);
+
+        //添加定时取消任务
+        addCancelOrderTask(order);
 
         //添加订单中课程绑定关系
         for (OrderCourseRel courseRel : courseNums) {
@@ -340,7 +344,23 @@ public class WxOrderServiceImpl implements WxOrderService {
             String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getPayTime(),
                     TimeUtil.DAY, Integer.valueOf(dict.getDictValue())));
             quartzManager.addJob(String.valueOf(order.getId()), "动态订单自动核销任务触发器",
-                    String.valueOf(order.getId()), "ORDER_AUTO_CHECK_JOB_GROUP", OrderJob.class, cron, jobMap);
+                    String.valueOf(order.getId()), "ORDER_AUTO_CHECK_JOB_GROUP", AutoCheckOrderJob.class, cron, jobMap);
         });
+    }
+
+    /**
+     * 自动取消订单任务
+     * @param order
+     */
+    private void addCancelOrderTask(Order order){
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(() -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("orderId", order.getId());
+            String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getCreateTime(), TimeUtil.MINUTE, 1));
+            quartzManager.addJob(String.valueOf(order.getId()), "动态订单任务触发器",
+                    String.valueOf(order.getId()), "ORDER_JOB_GROUP", OrderJob.class, cron, map);
+        });
+
     }
 }

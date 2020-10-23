@@ -66,30 +66,4 @@ public class MyTask {
             }
         }
     }
-
-    /**
-     * 系统启动后10秒执行一次
-     * 每小时执行一次
-     * 取消未支付的订单自动任务
-     *
-     * @throws Exception
-     */
-    @Scheduled(initialDelay = 10000, fixedDelay = 25L * 60 * 1000)
-    public void orderTask() throws Exception {
-
-        // 查询所有未支付的订单
-        List<Order> orders = wxOrderService.queryAllByQuartz(Constants.UNPAID);
-        if (null != orders && orders.size() > 0) {
-            for (Order order : orders) {
-                if (order.getStatus() == Constants.UNPAID) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("orderId", order.getId());
-                    String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getCreateTime(), TimeUtil.MINUTE, 30));
-                    quartzManager.addJob(String.valueOf(order.getId()), "动态订单任务触发器",
-                            String.valueOf(order.getId()), "ORDER_JOB_GROUP", OrderJob.class, cron, map);
-                }
-            }
-        }
-    }
-
 }
