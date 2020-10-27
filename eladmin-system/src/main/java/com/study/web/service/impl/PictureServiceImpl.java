@@ -38,7 +38,7 @@ public class PictureServiceImpl implements PictureService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer insert(Picture picture, MultipartFile multipartFile, String serverIpPort) {
+    public Long insert(Picture picture, MultipartFile multipartFile, String serverIpPort) {
         FileUtil.checkSize(properties.getMaxSize(), multipartFile.getSize());
         String suffix = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
         String type = FileUtil.getEnglishFileType(suffix);
@@ -53,8 +53,8 @@ public class PictureServiceImpl implements PictureService {
         picture.setPictureUrl(pictureUrl);
         picture.setCreateTime(new Date());
         picture.setCreateUser(currentUsername);
-        int id = this.pictureDao.insert(picture);
-        return id;
+        this.pictureDao.insert(picture);
+        return picture.getId();
     }
 
     /**
@@ -71,5 +71,10 @@ public class PictureServiceImpl implements PictureService {
     @Override
     public List<Picture> queryPictureByCourseId(Long courseId) {
         return pictureDao.queryPictureList(courseId);
+    }
+
+    @Override
+    public void deleteBatch(List<Long> ids) {
+        pictureDao.deleteBatch(ids);
     }
 }

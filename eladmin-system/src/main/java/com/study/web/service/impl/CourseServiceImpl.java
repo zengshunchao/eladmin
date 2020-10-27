@@ -65,37 +65,14 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Course insert(Course course, MultipartFile[] coverFile, MultipartFile[] courseInfoFile, HttpServletRequest request) {
+    public Course insert(Course course,List<Picture> pictureList) {
 
-        // 存储图片预览地址
-        String serverIPPort = getServerPath(request);
         // 保存课程
         String currentUsername = SecurityUtils.getCurrentUsername();
         course.setCreateUser(currentUsername);
         course.setCreateTime(new Date());
         this.courseDao.insert(course);
-        // 保存封面图片
-        for (MultipartFile cover : coverFile) {
-            Picture picture = new Picture();
-            picture.setPictureType(Constants.PICTURE_TYPE_COVER);
-            pictureService.insert(picture, cover, serverIPPort);
-            // 保存课程-封面管理信息
-            CoursePictureRel coursePictureRel = new CoursePictureRel();
-            coursePictureRel.setCourseId(course.getId());
-            coursePictureRel.setPictureId(picture.getId());
-            coursePictureRelDao.insert(coursePictureRel);
-        }
-        // 保存课程详情图片
-        for (MultipartFile cover : courseInfoFile) {
-            Picture picture = new Picture();
-            picture.setPictureType(Constants.PICTURE_TYPE_INFO);
-            pictureService.insert(picture, cover, serverIPPort);
-            // 保存课程-课程详情管理信息
-            CoursePictureRel coursePictureRel = new CoursePictureRel();
-            coursePictureRel.setCourseId(course.getId());
-            coursePictureRel.setPictureId(picture.getId());
-            coursePictureRelDao.insert(coursePictureRel);
-        }
+        addCoursePictureRel(course,pictureList);
         return course;
     }
 
@@ -106,8 +83,29 @@ public class CourseServiceImpl implements CourseService {
      * @return 实例对象
      */
     @Override
-    public void update(Course course) {
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Course course, List<Picture> pictureList) {
         this.courseDao.update(course);
+        //删除原有图片关联
+        List<Long> ids = new ArrayList<>();
+        ids.add(course.getId());
+        coursePictureRelDao.deleteBatch(ids);
+        addCoursePictureRel(course,pictureList);
+
+    }
+
+    /**
+     * 添加课程图片关联
+     * @param course
+     * @param pictureList
+     */
+    private void addCoursePictureRel(Course course, List<Picture> pictureList){
+        for (Picture picture : pictureList) {
+            CoursePictureRel coursePictureRel = new CoursePictureRel();
+            coursePictureRel.setCourseId(course.getId());
+            coursePictureRel.setPictureId(picture.getId());
+            coursePictureRelDao.insert(coursePictureRel);
+        }
     }
 
     /**

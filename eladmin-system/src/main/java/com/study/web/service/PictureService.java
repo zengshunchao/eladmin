@@ -18,7 +18,7 @@ public interface PictureService {
      *
      * @return 实例对象
      */
-    Integer insert(Picture picture,MultipartFile multipartFile,String serverIpPort);
+    Long insert(Picture picture,MultipartFile multipartFile,String serverIpPort);
 
     /**
      * 修改数据
@@ -34,4 +34,11 @@ public interface PictureService {
      * @return
      */
     List<Picture> queryPictureByCourseId(Long courseId);
+
+
+    /**
+     *  批量删除
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }

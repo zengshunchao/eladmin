@@ -3,6 +3,7 @@ package com.study.web.service;
 import com.study.web.dto.CourseInfoDto;
 import com.study.web.dto.CourseQueryDto;
 import com.study.web.entity.Course;
+import com.study.web.entity.Picture;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,11 +31,9 @@ public interface CourseService {
      * 新增课程、添加封面图 详情图
      *
      * @param course         课程信息
-     * @param coverFile      封面图
-     * @param courseInfoFile 详情图
      * @return
      */
-    Course insert(Course course, MultipartFile[] coverFile, MultipartFile[] courseInfoFile, HttpServletRequest request);
+    Course insert(Course course, List<Picture> pictureList);
 
     /**
      * 修改数据
@@ -42,7 +41,7 @@ public interface CourseService {
      * @param course 实例对象
      * @return 实例对象
      */
-    void update(Course course);
+    void update(Course course, List<Picture> pictureList);
 
     /**
      * 通过主键删除数据

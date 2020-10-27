@@ -1,16 +1,20 @@
 package com.study.web.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.study.annotation.Log;
 import com.study.service.LocalStorageService;
 import com.study.utils.PageUtil;
 import com.study.web.dto.CourseInfoDto;
 import com.study.web.dto.CourseQueryDto;
 import com.study.web.entity.Course;
+import com.study.web.entity.Picture;
 import com.study.web.service.CourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -60,16 +64,21 @@ public class CourseController {
     @ApiOperation("添加课程")
     @RequestMapping(value = "add", method = RequestMethod.POST)
     @PreAuthorize("@el.check('course:add')")
-    public ResponseEntity<Object> create(Course course, @RequestParam("files") MultipartFile[] file,
-                                         @RequestParam("fileLists") MultipartFile[] fileLists,
+    public ResponseEntity<Object> create(Course course,
+                                         @RequestParam("picture") String picture,
                                          HttpServletRequest request,
                                          HttpServletResponse response) {
 
-        if (ObjectUtil.isEmpty(course) || ObjectUtil.isEmpty(file) || ObjectUtil.isEmpty(fileLists)) {
+        if(StringUtils.isEmpty(picture)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        List<Picture> pictureList = JSONObject.parseArray(picture,Picture.class);
+        if(CollectionUtil.isEmpty(pictureList)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         try {
-            courseService.insert(course, file, fileLists, request);
+            courseService.insert(course, pictureList);
         } catch (Exception e) {
             log.error("course insert fail: ()", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,9 +113,20 @@ public class CourseController {
 
     @ApiOperation("更新课程")
     @PostMapping("updateCourse")
-    public ResponseEntity<Object> updateCourse(Course course, @RequestParam("files") MultipartFile[] file, @RequestParam("fileLists") MultipartFile[] fileLists) {
+    public ResponseEntity<Object> updateCourse(Course course, @RequestParam("picture") String picture) {
         try {
-            courseService.updateLineType(course.getId());
+            if(null == course.getId()){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            if(StringUtils.isEmpty(picture)){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            List<Picture> pictureList = JSONObject.parseArray(picture,Picture.class);
+            if(CollectionUtil.isEmpty(pictureList)){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            courseService.update(course, pictureList);
         } catch (Exception e) {
             log.error("course updateLineType fail: ()", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
