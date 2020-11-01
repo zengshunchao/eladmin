@@ -18,6 +18,7 @@ package com.study;
 import com.study.annotation.rest.AnonymousGetMapping;
 import com.study.utils.SpringContextHolder;
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -44,11 +45,12 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableScheduling
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @MapperScan(basePackages = {"com.study.web.dao"})
+@Slf4j
 public class AppRun {
 
     public static void main(String[] args) {
         SpringApplication.run(AppRun.class, args);
-        System.out.println("======......项目启动成功......======");
+        log.info("======......项目启动成功......======");
     }
 
     @Bean

@@ -89,7 +89,7 @@ public class Constants {
     public static final int WALLET_WATER_OTHER = 3;
 
     /**
-     *  订单自动核销时间
+     * 订单自动核销时间
      */
     public static final String AUTO_CHECK_TIME_KEY = "auto_check_time";
 
@@ -97,4 +97,13 @@ public class Constants {
      * 自动取消未支付订单
      */
     public static final String AUTO_CANCEL_ORDER_TIME = "auto_cancel_order_time";
+
+    /**
+     * wxapi接口签名校验参数
+     */
+    public static final String api_appId = "tomuchlove";
+    public static final String api_source = "wechat";
+    public static final String api_version = "v1.0";
+    public static final String api_publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDEdTXy71ApsA6VzSKlQMfQx/Pff+c8nj8Emn/ueNM5Dpp7P+BjC4uO3L8SZf23tiGnkwZMZN3jS50hWwAcot28VfR7ULXx3wtJhSUTg1muZSe1LBIld+SxdPucHN1aPNBZ4DmOwyYHRLB6QjisW22SzNNyBceB215Am4CeJWZcWwIDAQAB";
+    public static final String api_privateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAMR1NfLvUCmwDpXNIqVAx9DH899/5zyePwSaf+540zkOmns/4GMLi47cvxJl/be2IaeTBkxk3eNLnSFbAByi3bxV9HtQtfHfC0mFJRODWa5lJ7UsEiV35LF0+5wc3Vo80FngOY7DJgdEsHpCOKxbbZLM03IFx4HbXkCbgJ4lZlxbAgMBAAECgYB3jYSZI/06gUM+8ijlO7jdWvETz7gecYaT/Jlhu/F+RV7JJiQc4ge5lqhIP/zYcWOloJkyoCdPjNJAXCqDQrGAO9HQBTrZBS8YJ9ScnahJrMTBbOLdDk9JqYtMN8REDe0rB6rLTiFLF+WOr/ldKbC48caLhZRWmHvPsgebLOFt8QJBAOxyZ4fOOUFVeiK1OVOEqwNeonTFZi3hKl6TDTMs+f2Qo94/7K7/+8YklcuSPmARz6Dq7tO9jInDQQDiENaSqxUCQQDUtDxiYFgdEvC0qJfDEFdflmAHKY8Z3pssaAiOxJ9YDn9M2MMNos7uMXi33b2fCsOhZ1rsGVzTQ+5Mr2M1nAWvAkA4EcUVQkT3hkKJOnpWoM5A5U8W67yYQp3egXaO3SqHA6aoTHZe5VsaGJDhDlP2SiL3YN6znW5XONMQV4twpqUlAkB7L2LlSozdUbHLvvQdiWJAvrMgksYIom5V2m5SWLc75TF+jO7x/78+HbKfMbF24WIJIPV8VPf4dpgVG2ImkxSLAkBLmr+l3cs+RaQjUgSKoYTcly8asTH1Kyvufa0Gib8c3Vq20FDC8qCcznQzwkt4NbzvQtGj9wWRClZpAKTZPDb3";
 }
