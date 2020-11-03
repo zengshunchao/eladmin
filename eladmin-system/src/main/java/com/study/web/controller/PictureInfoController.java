@@ -83,8 +83,8 @@ public class PictureInfoController {
         if (os.toLowerCase().startsWith(ElAdminConstant.WIN)) {
             return serverIPPort;
         } else if (os.toLowerCase().startsWith(ElAdminConstant.MAC)) {
-            return "https://tomuchlove:8000/file/image/";
+            return "https://tomuchlove.xyz/file/image/";
         }
-        return "https://tomuchlove:8000/file/image/";
+        return "https://tomuchlove.xyz/file/image/";
     }
 }

@@ -254,8 +254,8 @@ public class CourseServiceImpl implements CourseService {
         if (os.toLowerCase().startsWith(ElAdminConstant.WIN)) {
             return serverIPPort;
         } else if (os.toLowerCase().startsWith(ElAdminConstant.MAC)) {
-            return "https://tomuchlove.xyz:8000/file/image/";
+            return "https://tomuchlove.xyz/file/image/";
         }
-        return "https://tomuchlove.xyz:8000/file/image/";
+        return "https://tomuchlove.xyz/file/image/";
     }
 }
