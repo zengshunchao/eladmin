@@ -4,13 +4,15 @@ spring:
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
       driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-#      url: jdbc:log4jdbc:mysql://203.195.198.223:3306/zsc?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
-#      username: root
-#      password: huangxh1!@
-      url: jdbc:log4jdbc:mysql://localhost:3306/study?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:log4jdbc:mysql://127.0.0.1:3306/tomuchlove?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
       username: root
-      password: root
-      # 203.195.198.223  username: root password: huangxh1!@
+      password: tomuchlove
+#      url: jdbc:log4jdbc:mysql://localhost:3306/study?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+#      username: root
+#      password: root
+#      url: jdbc:log4jdbc:mysql://139.155.59.180:3306/tomuchlove?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+#      username: root
+#      password: tomuchlove
       # 初始连接数
       initial-size: 5
       # 最小连接数

@@ -58,10 +58,17 @@ public class MyTask {
         if (null != list && list.size() > 0) {
             for (Commission commission : list) {
                 if (commission.getLockStatus() == 0) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("commissionId", commission.getId());
-                    String cron = TimeUtil.transCorn(commission.getLockTime());
-                    quartzManager.addJob("" + commission.getId(), "动态佣金任务触发器", "" + commission.getId(), "COMMISSION_JOB_GROUP", CommissionJob.class, cron, map);
+                    //解锁时间小于当前时间 自动解锁
+                    Date now = TimeUtil.afterTime(new Date(), TimeUtil.SECOND, 10);
+                    if(commission.getLockTime().compareTo(now)<=0){
+                        //修改佣金状态并修改用户钱包
+                        wxCommissionService.updateLockStatus(commission.getId());
+                    }else {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("commissionId", commission.getId());
+                        String cron = TimeUtil.transCorn(commission.getLockTime());
+                        quartzManager.addJob("" + commission.getId(), "动态佣金任务触发器", "" + commission.getId(), "COMMISSION_JOB_GROUP", CommissionJob.class, cron, map);
+                    }
                 }
             }
         }

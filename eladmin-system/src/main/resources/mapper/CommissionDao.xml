@@ -74,7 +74,7 @@
         from t_commission
         where wx_user_id = #{wxUserId}
     </select>
-    <select id="queryListByLockTime" resultType="com.study.web.entity.Commission">
+    <select id="queryListByLockTime" resultMap="CommissionMap">
         select
         id, lock_time, lock_status
         from t_commission
