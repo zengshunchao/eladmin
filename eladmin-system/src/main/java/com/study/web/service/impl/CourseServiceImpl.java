@@ -245,17 +245,4 @@ public class CourseServiceImpl implements CourseService {
             return "";
         }
     }
-
-    private String getServerPath(HttpServletRequest request) {
-        // 存储图片预览地址
-        String serverIPPort = ServerUtil.getServerIPPort(request);
-        serverIPPort = serverIPPort + "/file/image/";
-        String os = System.getProperty("os.name");
-        if (os.toLowerCase().startsWith(ElAdminConstant.WIN)) {
-            return serverIPPort;
-        } else if (os.toLowerCase().startsWith(ElAdminConstant.MAC)) {
-            return "https://tomuchlove.xyz/file/image/";
-        }
-        return "https://tomuchlove.xyz/file/image/";
-    }
 }

@@ -114,7 +114,7 @@ public class WxWalletServiceImpl implements WxWalletService {
         wallet.setMayCashMoney(wallet.getMayCashMoney().subtract(walletDto.getWithdrawal()));
         walletDao.update(wallet);
         //添加流水信息
-        WalletWater water = new WalletWater(walletDto.getWxUserId(), walletDto.getWithdrawal(), Constants.WALLET_WATER_INCOME, "佣金提现");
+        WalletWater water = new WalletWater(walletDto.getWxUserId(), walletDto.getWithdrawal(), Constants.WALLET_WATER_EXPEND, "佣金提现");
         walletWaterDao.insert(water);
 
         //TODO
