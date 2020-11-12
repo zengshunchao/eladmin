@@ -1,5 +1,7 @@
 package com.study.web.dao;
 
+import com.study.web.dto.WalletDto;
+import com.study.web.dto.WalletWaterDto;
 import com.study.web.entity.WalletWater;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -57,4 +59,7 @@ public interface WalletWaterDao {
      */
     int deleteById(Long id);
 
+    Integer countWalletWaterList(WalletWaterDto walletWaterDto);
+
+    List<WalletWater> getWalletWaterList(WalletWaterDto walletWaterDto);
 }

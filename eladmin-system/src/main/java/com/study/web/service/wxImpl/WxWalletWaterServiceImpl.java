@@ -1,6 +1,8 @@
 package com.study.web.service.wxImpl;
 
 import com.study.web.dao.WalletWaterDao;
+import com.study.web.dto.WalletDto;
+import com.study.web.dto.WalletWaterDto;
 import com.study.web.entity.WalletWater;
 import com.study.web.service.WxWalletWaterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +68,15 @@ public class WxWalletWaterServiceImpl implements WxWalletWaterService {
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Long id) {
         return this.walletWaterDao.deleteById(id) > 0;
+    }
+
+    @Override
+    public Integer countWalletWaterList(WalletWaterDto walletWaterDto) {
+        return this.walletWaterDao.countWalletWaterList(walletWaterDto);
+    }
+
+    @Override
+    public List<WalletWater> getWalletWaterList(WalletWaterDto walletWaterDto) {
+        return this.walletWaterDao.getWalletWaterList(walletWaterDto);
     }
 }

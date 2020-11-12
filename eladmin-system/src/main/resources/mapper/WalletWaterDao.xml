@@ -11,6 +11,18 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+
+    <resultMap type="com.study.web.dto.WalletWaterDto" id="WalletWaterDtoMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="money" column="money" jdbcType="DECIMAL"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="checkTime" column="check_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
     <!--查询单个-->
     <select id="queryById" resultMap="WalletWaterMap">
         select
@@ -39,13 +51,23 @@
             <if test="wxUserId != null">
                 and wx_user_id = #{wxUserId}
             </if>
-            <if test="remark != null and remark != ''">
-                and remark = #{remark}
-            </if>
-            <if test="createTime != null">
-                and create_time = #{createTime}
-            </if>
         </where>
+    </select>
+    <select id="countWalletWaterList" resultType="java.lang.Integer">
+        select count(1)
+        from t_wallet_water
+        where wx_user_id = #{wxUserId}
+    </select>
+    <select id="getWalletWaterList" resultMap="WalletWaterDtoMap">
+        select
+        t1.id,t1.wx_user_id, t1.money, t1.type, t1.remark, t1.create_time,t2.status,t2.check_time
+        from t_wallet_water t1
+		left join t_apply t2 on t1.id = t2.wallet_water_id
+        where t1.wx_user_id = #{wxUserId}
+        order by t1.create_time desc
+        <if test="pageSize != 0">
+            limit #{startNum}, #{pageSize}
+        </if>
     </select>
 
     <!--新增所有列-->

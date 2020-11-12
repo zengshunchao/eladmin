@@ -1,5 +1,6 @@
 package com.study.web.service;
 
+import com.study.web.dto.WalletWaterDto;
 import com.study.web.entity.WalletWater;
 
 import java.util.List;
@@ -44,5 +45,9 @@ public interface WxWalletWaterService {
      * @return 是否成功
      */
     boolean deleteById(Long id);
+
+    Integer countWalletWaterList(WalletWaterDto walletWaterDto);
+
+    List<WalletWater> getWalletWaterList(WalletWaterDto walletWaterDto);
 
 }
