@@ -59,6 +59,8 @@ public class WxOrderServiceImpl implements WxOrderService {
     @Autowired
     private WxWalletWaterService wxWalletWaterService;
     @Autowired
+    private WxShareServiceImpl wxShareService;
+    @Autowired
     QuartzManager quartzManager;
 
     /**
@@ -137,9 +139,14 @@ public class WxOrderServiceImpl implements WxOrderService {
         //添加定时取消任务
         addCancelOrderTask(order);
 
+        Share share = wxShareService.queryById(orderInfoDto.getWxUserId());
+
         //添加订单中课程绑定关系
         for (OrderCourseRel courseRel : courseNums) {
             courseRel.setOrderId(order.getId());
+            if(null != share){
+                courseRel.setShareId(share.getShareId());
+            }
             orderCourseRelDao.insert(courseRel);
         }
         // 本地添加成功就调用微信统一下单接口
