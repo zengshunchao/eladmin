@@ -48,6 +48,6 @@ public interface WxWalletWaterService {
 
     Integer countWalletWaterList(WalletWaterDto walletWaterDto);
 
-    List<WalletWater> getWalletWaterList(WalletWaterDto walletWaterDto);
+    List<WalletWaterDto> getWalletWaterList(WalletWaterDto walletWaterDto);
 
 }

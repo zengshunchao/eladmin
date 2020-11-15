@@ -60,7 +60,12 @@
     </select>
     <select id="getWalletWaterList" resultMap="WalletWaterDtoMap">
         select
-        t1.id,t1.wx_user_id, t1.money, t1.type, t1.remark, t1.create_time,t2.status,t2.check_time
+        t1.id,t1.wx_user_id, t1.money, t1.type, t1.remark, t1.create_time,
+        case
+        when t1.type = 1 then 1
+        when t1.type = 2 then IFNULL(t2.`status`,0)
+        end `status`,
+        t2.check_time
         from t_wallet_water t1
 		left join t_apply t2 on t1.id = t2.wallet_water_id
         where t1.wx_user_id = #{wxUserId}

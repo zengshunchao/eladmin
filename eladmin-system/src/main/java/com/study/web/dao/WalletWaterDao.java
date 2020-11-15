@@ -61,5 +61,5 @@ public interface WalletWaterDao {
 
     Integer countWalletWaterList(WalletWaterDto walletWaterDto);
 
-    List<WalletWater> getWalletWaterList(WalletWaterDto walletWaterDto);
+    List<WalletWaterDto> getWalletWaterList(WalletWaterDto walletWaterDto);
 }

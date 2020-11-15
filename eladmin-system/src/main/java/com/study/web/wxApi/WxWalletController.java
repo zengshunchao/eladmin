@@ -65,7 +65,7 @@ public class WxWalletController extends JsonResultController{
         try {
             Integer count = wxWalletWaterService.countWalletWaterList(walletWaterDto);
             setPageInfo(walletWaterDto);
-            List<WalletWater> list = new ArrayList<>();
+            List<WalletWaterDto> list = new ArrayList<>();
             if(count>0){
                 list = wxWalletWaterService.getWalletWaterList(walletWaterDto);
             }

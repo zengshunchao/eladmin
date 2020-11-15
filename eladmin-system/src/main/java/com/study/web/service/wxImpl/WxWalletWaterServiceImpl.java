@@ -76,7 +76,7 @@ public class WxWalletWaterServiceImpl implements WxWalletWaterService {
     }
 
     @Override
-    public List<WalletWater> getWalletWaterList(WalletWaterDto walletWaterDto) {
+    public List<WalletWaterDto> getWalletWaterList(WalletWaterDto walletWaterDto) {
         return this.walletWaterDao.getWalletWaterList(walletWaterDto);
     }
 }
