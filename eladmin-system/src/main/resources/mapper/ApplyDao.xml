@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.web.dao.ApplyDao">
+
+    <resultMap type="com.study.web.entity.Apply" id="ApplyMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="walletWaterId" column="wallet_water_id" jdbcType="BIGINT"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="accountName" column="account_name" jdbcType="VARCHAR"/>
+        <result property="accountNumber" column="account_number" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="checkTime" column="check_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.study.web.dto.ApplyDto" id="BaseResult">
+        <result property="applyId" column="applyId" jdbcType="BIGINT"/>
+        <result property="wxUserId" column="wx_user_id" jdbcType="BIGINT"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="accountName" column="account_name" jdbcType="VARCHAR"/>
+        <result property="accountNumber" column="account_number" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="checkTime" column="check_time" jdbcType="TIMESTAMP"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="money" column="money" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ApplyMap">
+        select
+          id, wallet_water_id, wx_user_id, account_name, account_number, status, create_time, check_time
+        from t_apply
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResult">
+        SELECT
+        t1.id AS
+        applyId,t1.account_name,t1.account_number,t1.status,t1.create_time,t1.check_time,t2.id as wx_user_id,t2.nick_name,t2.phone,t7.money
+        FROM
+        t_apply t1
+        LEFT JOIN t_wx_user t2 ON t1.wx_user_id = t2.id
+        LEFT JOIN t_wallet_water t7 ON t1.wallet_water_id = t7.id
+        WHERE
+        t1.status = 0 and 1=1
+        <if test="wxUser.nickName != null and wxUser.nickName != ''">
+            and t2.nick_name like concat('%',#{wxUser.nickName},'%')
+        </if>
+        <if test="wxUser.phone != null and wxUser.phone != ''">
+            and t2.phone like concat('%',#{wxUser.phone},'%')
+        </if>
+        ORDER BY
+        create_time
+        limit #{startNum},#{pageSize}
+    </select>
+
+    <select id="totalCount" resultType="java.lang.Integer">
+        select count(1) from t_apply t1 left join t_wx_user t2 on t1.wx_user_id = t2.id where
+        t1.status = 0 and 1=1
+        <if test="nickName != null and nickName != ''">
+            and t2.nick_name like concat('%',#{nickName},'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and t2.phone like concat('%',#{phone},'%')
+        </if>
+    </select>
+
+    <select id="getBalance" resultType="java.math.BigDecimal">
+        SELECT
+        t5.may_cash_money + t6.sp_money as balance
+        FROM t_wallet t5 LEFT JOIN (SELECT sum( t4.money ) sp_money FROM t_apply t3 LEFT JOIN t_wallet_water t4 ON
+        t3.wallet_water_id = t4.id WHERE t3.status = 0 AND t3.wx_user_id = #{wxUserId}) t6 ON 1 = 1 WHERE
+        t5.wx_user_id = #{wxUserId}
+    </select>
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ApplyMap">
+        select
+        id, wallet_water_id, wx_user_id, account_name, account_number, status, create_time, check_time
+        from t_apply
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="walletWaterId != null">
+                and wallet_water_id = #{walletWaterId}
+            </if>
+            <if test="wxUserId != null">
+                and wx_user_id = #{wxUserId}
+            </if>
+            <if test="accountName != null and accountName != ''">
+                and account_name = #{accountName}
+            </if>
+            <if test="accountNumber != null and accountNumber != ''">
+                and account_number = #{accountNumber}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="checkTime != null">
+                and check_time = #{checkTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="walletWaterId != null">wallet_water_id ,</if>
+            <if test="wxUserId != null">wx_user_id ,</if>
+            <if test="accountName != null and accountName != ''">account_name ,</if>
+            <if test="accountNumber != null and accountNumber != ''">account_number ,</if>
+            <if test="status != null">`status` ,</if>
+            <if test="createTime != null">create_time ,</if>
+            <if test="checkTime != null">check_time ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="walletWaterId != null">#{walletWaterId} ,</if>
+            <if test="wxUserId != null">#{wxUserId} ,</if>
+            <if test="accountName != null and accountName != ''">#{accountName} ,</if>
+            <if test="accountNumber != null and accountNumber != ''">#{accountNumber} ,</if>
+            <if test="status != null">#{status} ,</if>
+            <if test="createTime != null">#{createTime} ,</if>
+            <if test="checkTime != null">#{checkTime} ,</if>
+        </trim>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_apply
+        <set>
+            <if test="walletWaterId != null">
+                wallet_water_id = #{walletWaterId},
+            </if>
+            <if test="wxUserId != null">
+                wx_user_id = #{wxUserId},
+            </if>
+            <if test="accountName != null and accountName != ''">
+                account_name = #{accountName},
+            </if>
+            <if test="accountNumber != null and accountNumber != ''">
+                account_number = #{accountNumber},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="checkTime != null">
+                check_time = #{checkTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from t_apply where id = #{id}
+    </delete>
+
+</mapper>

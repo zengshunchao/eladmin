@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/wallet")
-public class WxWalletController extends JsonResultController{
+public class WxWalletController extends JsonResultController {
     @Autowired
     private WxWalletService wxWalletService;
 
@@ -37,42 +37,42 @@ public class WxWalletController extends JsonResultController{
 
     @ApiOperation("钱包")
     @RequestMapping(value = "getWallet", method = RequestMethod.POST)
-    public ResultValue getWallet(@RequestBody Wallet wallet){
+    public ResultValue getWallet(@RequestBody Wallet wallet) {
         try {
-            wallet =  wxWalletService.queryByWxUserId(wallet.getWxUserId());
-            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),wallet);
+            wallet = wxWalletService.queryByWxUserId(wallet.getWxUserId());
+            return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), wallet);
         } catch (Exception e) {
             log.error("getWallet fail {}", e);
-            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
 
     @ApiOperation("提现")
     @RequestMapping(value = "withdrawal", method = RequestMethod.POST)
-    public ResultValue withdrawal(@RequestBody WalletDto walletDto){
+    public ResultValue withdrawal(@RequestBody WalletDto walletDto) {
         try {
             wxWalletService.withdrawal(walletDto);
             return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
             log.error("getWallet fail {}", e);
-            return errorResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+            return errorResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
 
     @ApiOperation("钱包流水")
     @RequestMapping(value = "getWalletWaterList", method = RequestMethod.POST)
-    public TableResultValue getWalletWaterList(@RequestBody WalletWaterDto walletWaterDto){
+    public TableResultValue getWalletWaterList(@RequestBody WalletWaterDto walletWaterDto) {
         try {
             Integer count = wxWalletWaterService.countWalletWaterList(walletWaterDto);
             setPageInfo(walletWaterDto);
             List<WalletWaterDto> list = new ArrayList<>();
-            if(count>0){
+            if (count > 0) {
                 list = wxWalletWaterService.getWalletWaterList(walletWaterDto);
             }
-            return tableJsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(),count,list);
+            return tableJsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), count, list);
         } catch (Exception e) {
             log.error("getWallet fail {}", e);
-            return errorTableResult( ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
+            return errorTableResult(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMsg());
         }
     }
 

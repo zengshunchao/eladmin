@@ -1,8 +1,10 @@
 package com.study.web.service.wxImpl;
 
+import com.study.web.dao.ApplyDao;
 import com.study.web.dao.WalletDao;
 import com.study.web.dao.WalletWaterDao;
 import com.study.web.dto.WalletDto;
+import com.study.web.entity.Apply;
 import com.study.web.entity.Commission;
 import com.study.web.entity.Wallet;
 import com.study.web.entity.WalletWater;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,6 +31,9 @@ public class WxWalletServiceImpl implements WxWalletService {
 
     @Autowired
     private WalletWaterDao walletWaterDao;
+
+    @Autowired
+    private ApplyDao applyDao;
 
     /**
      * 通过ID查询单条数据
@@ -117,9 +123,16 @@ public class WxWalletServiceImpl implements WxWalletService {
         WalletWater water = new WalletWater(walletDto.getWxUserId(), walletDto.getWithdrawal(), Constants.WALLET_WATER_EXPEND, "佣金提现");
         walletWaterDao.insert(water);
 
-        //TODO
-        // 微信提现请求
-        //
+        // 添加提现申请
+        Apply apply = new Apply();
+        apply.setWalletWaterId(water.getId());
+        apply.setWxUserId(walletDto.getWxUserId());
+        apply.setAccountName(walletDto.getAccountName());
+        apply.setAccountNumber(walletDto.getAccountNumber());
+        apply.setStatus(Constants.APPLY_STATUS_NO);
+        apply.setCreateTime(new Date());
+        applyDao.insert(apply);
+
     }
 
     @Override

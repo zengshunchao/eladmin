@@ -47,14 +47,27 @@ public class WalletDto implements Serializable {
     //提现金额
     private BigDecimal withdrawal;
 
+    /**
+     *  账号名称
+     */
+    private String accountName;
+
+    /**
+     *  账号编号
+     */
+    private String accountNumber;
+
     public WalletDto() {
     }
 
-    public WalletDto(Long wxUserId, BigDecimal allMoney, BigDecimal cashMoney, BigDecimal mayCashMoney, BigDecimal lockMoney) {
+    public WalletDto(Long wxUserId, BigDecimal allMoney, BigDecimal cashMoney, BigDecimal mayCashMoney, BigDecimal lockMoney, BigDecimal withdrawal, String accountName, String accountNumber) {
         this.wxUserId = wxUserId;
         this.allMoney = allMoney;
         this.cashMoney = cashMoney;
         this.mayCashMoney = mayCashMoney;
         this.lockMoney = lockMoney;
+        this.withdrawal = withdrawal;
+        this.accountName = accountName;
+        this.accountNumber = accountNumber;
     }
 }
