@@ -6,6 +6,7 @@ import com.study.web.dto.ApplyDto;
 import com.study.web.dto.CourseInfoDto;
 import com.study.web.dto.CourseQueryDto;
 import com.study.web.entity.Apply;
+import com.study.web.entity.Course;
 import com.study.web.entity.WxUser;
 import com.study.web.service.ApplyService;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -63,5 +65,35 @@ public class ApplyController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Log("查询提现记录")
+    @ApiOperation("查询提现记录")
+    @GetMapping("/queryCommissionRecord")
+    @PreAuthorize("@el.check('apply:list')")
+    public ResponseEntity<Object> querySuccessList(WxUser wxUser, Pageable pageable) {
+        try {
+            int total = applyService.totalSuccessCount(wxUser);
+            if (total > 0) {
+                List<ApplyDto> applies = applyService.queryAllSuccessByLimit(wxUser, pageable);
+                return new ResponseEntity<>(PageUtil.toPage(applies, total), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            log.error("commissionRecord query fail: ()", e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(PageUtil.toPage(null, 0), HttpStatus.OK);
+    }
+
+    @ApiOperation("查询平台累计提现金额")
+    @PostMapping("getAllMoney")
+    public ResponseEntity<Object> getAllMoney() {
+        try {
+            BigDecimal allMoney = applyService.getAllMoney();
+            return new ResponseEntity<>(allMoney, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("getAllMoney fail: ()", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

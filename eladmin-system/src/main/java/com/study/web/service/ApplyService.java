@@ -5,6 +5,7 @@ import com.study.web.entity.Apply;
 import com.study.web.entity.WxUser;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -63,4 +64,27 @@ public interface ApplyService {
      * @return
      */
     int totalCount(WxUser wxUser);
+
+    /**
+     * 提现记录
+     *
+     * @param wxUser
+     * @return
+     */
+    int totalSuccessCount(WxUser wxUser);
+
+    /**
+     * 查询提现记录多条数据
+     *
+     * @param wxUser
+     * @param pageable
+     * @return 对象列表
+     */
+    List<ApplyDto> queryAllSuccessByLimit(WxUser wxUser, Pageable pageable);
+
+    /**
+     *  统计平台累计提现金额
+     * @return
+     */
+    BigDecimal getAllMoney();
 }

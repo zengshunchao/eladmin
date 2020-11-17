@@ -16,10 +16,11 @@
         <result property="offlineTime" column="offline_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+        <result property="sortNumber" column="sort_number" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="BaseSql">
         id, course_name, course_money, course_commission, branch_name, branch_address,longitude,latitude,action_area, online_time, offline_time,
-        create_time, create_user
+        create_time, create_user,sort_number
     </sql>
     <!--查询单个-->
     <select id="queryById" resultMap="CourseMap" parameterType="java.lang.Long">
@@ -73,7 +74,7 @@
                 and create_user = #{course.createUser}
             </if>
         </where>
-        ORDER BY create_time DESC
+        ORDER BY sort_number is null ,sort_number ASC,create_time DESC
         limit #{startNum},#{pageSize}
     </select>
 
@@ -135,7 +136,7 @@
         <if test="latitude != null and longitude != null">
             dis,
         </if>
-        online_time desc
+        sort_number is null ,sort_number asc,online_time desc
         <if test="pageSize != 0">
             limit #{startNum}, #{pageSize}
         </if>
@@ -220,6 +221,9 @@
             </if>
             <if test="createUser != null and createUser != ''">
                 create_user = #{createUser},
+            </if>
+            <if test="sortNumber != null">
+                sort_number = #{sortNumber},
             </if>
         </set>
         where id = #{id}

@@ -50,8 +50,8 @@ public class CourseController {
     public ResponseEntity<Object> queryList(CourseQueryDto course, Pageable pageable) {
         try {
             int total = courseService.totalCourse(course);
-            if (total > 0){
-                List<CourseInfoDto> courses = courseService.queryAll(course,pageable);
+            if (total > 0) {
+                List<CourseInfoDto> courses = courseService.queryAll(course, pageable);
                 return new ResponseEntity<>(PageUtil.toPage(courses, total), HttpStatus.OK);
             }
         } catch (Exception e) {
@@ -69,11 +69,11 @@ public class CourseController {
                                          HttpServletRequest request,
                                          HttpServletResponse response) {
 
-        if(StringUtils.isEmpty(picture)){
+        if (StringUtils.isEmpty(picture)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        List<Picture> pictureList = JSONObject.parseArray(picture,Picture.class);
-        if(CollectionUtil.isEmpty(pictureList)){
+        List<Picture> pictureList = JSONObject.parseArray(picture, Picture.class);
+        if (CollectionUtil.isEmpty(pictureList)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -115,20 +115,38 @@ public class CourseController {
     @PostMapping("updateCourse")
     public ResponseEntity<Object> updateCourse(Course course, @RequestParam("picture") String picture) {
         try {
-            if(null == course.getId()){
+            if (null == course.getId()) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            if(StringUtils.isEmpty(picture)){
+            if (StringUtils.isEmpty(picture)) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            List<Picture> pictureList = JSONObject.parseArray(picture,Picture.class);
-            if(CollectionUtil.isEmpty(pictureList)){
+            List<Picture> pictureList = JSONObject.parseArray(picture, Picture.class);
+            if (CollectionUtil.isEmpty(pictureList)) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             courseService.update(course, pictureList);
         } catch (Exception e) {
             log.error("course updateLineType fail: ()", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation("修改排序")
+    @PostMapping("updateSortNumber")
+    public ResponseEntity<Object> updateSortNumber(@RequestBody Course course) {
+        try {
+            if (null == course.getId()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            if (null == course.getSortNumber()) {
+                course.setSortNumber(100);
+            }
+            courseService.updateSortNumber(course);
+        } catch (Exception e) {
+            log.error("course updateSortNumber fail: ()", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);

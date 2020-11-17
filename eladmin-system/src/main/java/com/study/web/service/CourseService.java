@@ -80,4 +80,10 @@ public interface CourseService {
      * @return
      */
     int totalCourse(CourseQueryDto courseQueryDto);
+
+    /**
+     *  修改排序
+     * @param course
+     */
+    void updateSortNumber(Course course);
 }

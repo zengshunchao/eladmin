@@ -72,4 +72,8 @@ public class Course implements Serializable {
      */
     private String latitude;
 
+    /**
+     *  排序编号
+     */
+    private Integer sortNumber;
 }

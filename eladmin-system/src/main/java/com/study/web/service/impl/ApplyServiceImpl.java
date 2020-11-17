@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -83,6 +84,7 @@ public class ApplyServiceImpl implements ApplyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(Apply apply) {
+        apply.setCheckTime(new Date());
         applyDao.update(apply);
         // 审核不通过则重新计算用户钱包
         if (Constants.APPLY_STATUS_FAIL == apply.getStatus()) {
@@ -111,5 +113,22 @@ public class ApplyServiceImpl implements ApplyService {
     @Override
     public int totalCount(WxUser wxUser) {
         return applyDao.totalCount(wxUser);
+    }
+
+    @Override
+    public int totalSuccessCount(WxUser wxUser) {
+        return applyDao.totalSuccessCount(wxUser);
+    }
+
+    @Override
+    public List<ApplyDto> queryAllSuccessByLimit(WxUser wxUser, Pageable pageable) {
+        int startNum = pageable.getPageNumber() > 0 ? pageable.getPageNumber() * pageable.getPageSize() : 0;
+        List<ApplyDto> applies = applyDao.queryAllSuccessByLimit(wxUser, startNum, pageable.getPageSize());
+        return applies;
+    }
+
+    @Override
+    public BigDecimal getAllMoney() {
+        return applyDao.getAllMoney();
     }
 }

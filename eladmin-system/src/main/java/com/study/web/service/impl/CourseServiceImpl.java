@@ -200,6 +200,11 @@ public class CourseServiceImpl implements CourseService {
         return total;
     }
 
+    @Override
+    public void updateSortNumber(Course course) {
+        courseDao.update(course);
+    }
+
     private Course queryParam(CourseQueryDto course) {
         Course queryCourse = new Course();
         try {

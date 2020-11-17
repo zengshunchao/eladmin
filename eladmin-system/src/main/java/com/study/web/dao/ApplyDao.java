@@ -34,17 +34,26 @@ public interface ApplyDao {
     List<ApplyDto> queryAllByLimit(WxUser wxUser, @Param("startNum") int startNum, @Param("pageSize") int pageSize);
 
     /**
-     *  分页查询统计
+     * 分页查询统计
+     *
      * @return
      */
     int totalCount(WxUser wxUser);
 
     /**
-     *  查询余额
+     * 查询余额
+     *
      * @param wxUserId
      * @return
      */
     BigDecimal getBalance(Long wxUserId);
+
+    /**
+     *  统计平台累计提现金额
+     * @return
+     */
+    BigDecimal getAllMoney();
+
     /**
      * 通过实体作为筛选条件查询
      *
@@ -77,4 +86,21 @@ public interface ApplyDao {
      */
     int deleteById(Long id);
 
+    /**
+     * 提现记录
+     *
+     * @param wxUser
+     * @return
+     */
+    int totalSuccessCount(WxUser wxUser);
+
+    /**
+     * 查询指定行数据
+     *
+     * @param wxUser
+     * @param startNum
+     * @param pageSize
+     * @return 对象列表
+     */
+    List<ApplyDto> queryAllSuccessByLimit(WxUser wxUser, @Param("startNum") int startNum, @Param("pageSize") int pageSize);
 }

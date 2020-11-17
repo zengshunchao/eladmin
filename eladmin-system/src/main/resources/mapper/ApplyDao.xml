@@ -38,7 +38,8 @@
     <select id="queryAllByLimit" resultMap="BaseResult">
         SELECT
         t1.id AS
-        applyId,t1.account_name,t1.account_number,t1.status,t1.create_time,t1.check_time,t2.id as wx_user_id,t2.nick_name,t2.phone,t7.money
+        applyId,t1.account_name,t1.account_number,t1.status,t1.create_time,t1.check_time,t2.id as
+        wx_user_id,t2.nick_name,t2.phone,t7.money
         FROM
         t_apply t1
         LEFT JOIN t_wx_user t2 ON t1.wx_user_id = t2.id
@@ -67,12 +68,50 @@
         </if>
     </select>
 
+    <select id="totalSuccessCount" resultType="java.lang.Integer">
+        select count(1) from t_apply t1 left join t_wx_user t2 on t1.wx_user_id = t2.id where
+        t1.status = 1 and 1=1
+        <if test="nickName != null and nickName != ''">
+            and t2.nick_name like concat('%',#{nickName},'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and t2.phone like concat('%',#{phone},'%')
+        </if>
+    </select>
+
+    <select id="queryAllSuccessByLimit" resultMap="BaseResult">
+        SELECT
+        t1.id AS
+        applyId,t1.account_name,t1.account_number,t1.status,t1.create_time,t1.check_time,t2.id as
+        wx_user_id,t2.nick_name,t2.phone,t7.money
+        FROM
+        t_apply t1
+        LEFT JOIN t_wx_user t2 ON t1.wx_user_id = t2.id
+        LEFT JOIN t_wallet_water t7 ON t1.wallet_water_id = t7.id
+        WHERE
+        t1.status = 1 and 1=1
+        <if test="wxUser.nickName != null and wxUser.nickName != ''">
+            and t2.nick_name like concat('%',#{wxUser.nickName},'%')
+        </if>
+        <if test="wxUser.phone != null and wxUser.phone != ''">
+            and t2.phone like concat('%',#{wxUser.phone},'%')
+        </if>
+        ORDER BY
+        create_time
+        limit #{startNum},#{pageSize}
+    </select>
+
     <select id="getBalance" resultType="java.math.BigDecimal">
         SELECT
         t5.may_cash_money + t6.sp_money as balance
         FROM t_wallet t5 LEFT JOIN (SELECT sum( t4.money ) sp_money FROM t_apply t3 LEFT JOIN t_wallet_water t4 ON
         t3.wallet_water_id = t4.id WHERE t3.status = 0 AND t3.wx_user_id = #{wxUserId}) t6 ON 1 = 1 WHERE
         t5.wx_user_id = #{wxUserId}
+    </select>
+
+    <select id="getAllMoney" resultType="java.math.BigDecimal">
+        select sum(t2.money) from t_apply t1 left join t_wallet_water t2 on t1.wallet_water_id = t2.id
+        where t1.`status` = 1
     </select>
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="ApplyMap">

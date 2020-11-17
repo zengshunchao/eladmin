@@ -90,5 +90,10 @@ public class CourseInfoDto  extends PageInfo {
      *  纬度
      */
     private String latitude;
+
+    /**
+     *  排序编号
+     */
+    private Integer sortNumber;
 }
 
