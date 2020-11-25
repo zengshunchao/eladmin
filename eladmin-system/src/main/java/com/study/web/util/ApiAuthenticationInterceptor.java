@@ -20,24 +20,24 @@ public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String appId = request.getHeader("appId");
-        String source = request.getHeader("source");
-        String version = request.getHeader("version");
-        String signature = request.getHeader("signature");
-        if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(appId)
-                || StringUtils.isEmpty(source) || StringUtils.isEmpty(version)) {
-            JSONObject jb = new JSONObject();
-            jb.put("code", ResponseCode.BADREQUESTPARAM.getCode());
-            jb.put("msg", ResponseCode.BADREQUESTPARAM.getMsg());
-            returnData(response, jb);
-            return false;
-        }
-        // 解密并校验
-        JSONObject jsonObject = checkParams(appId, source, version, signature);
-        if (!jsonObject.isEmpty()) {
-            returnData(response, jsonObject);
-            return false;
-        }
+//        String appId = request.getHeader("appId");
+//        String source = request.getHeader("source");
+//        String version = request.getHeader("version");
+//        String signature = request.getHeader("signature");
+//        if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(appId)
+//                || StringUtils.isEmpty(source) || StringUtils.isEmpty(version)) {
+//            JSONObject jb = new JSONObject();
+//            jb.put("code", ResponseCode.BADREQUESTPARAM.getCode());
+//            jb.put("msg", ResponseCode.BADREQUESTPARAM.getMsg());
+//            returnData(response, jb);
+//            return false;
+//        }
+//        // 解密并校验
+//        JSONObject jsonObject = checkParams(appId, source, version, signature);
+//        if (!jsonObject.isEmpty()) {
+//            returnData(response, jsonObject);
+//            return false;
+//        }
         return true;
     }
 
