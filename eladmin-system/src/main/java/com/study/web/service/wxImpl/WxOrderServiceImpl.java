@@ -106,6 +106,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 map = wxPayService.unifiedOrder(request, order);
                 // 统一下单成功则将订单商户号一并返回
                 map.put("outTradeNo", out_trade_no);
+                map.put("orderId", String.valueOf(order.getId()));
                 return map;
             }
 
@@ -154,6 +155,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             map = wxPayService.unifiedOrder(request, order);
             if (map != null) {
                 map.put("outTradeNo", out_trade_no);
+                map.put("orderId", String.valueOf(order.getId()));
             }
         }
         return map;

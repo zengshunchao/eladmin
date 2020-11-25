@@ -1,7 +1,11 @@
 package com.study.web.wxApi;
 
 import com.study.web.dto.ResultValue;
+import com.study.web.entity.Distribution;
 import com.study.web.entity.Share;
+import com.study.web.entity.WxUser;
+import com.study.web.service.WxDistributionService;
+import com.study.web.service.WxLoginService;
 import com.study.web.service.WxShareService;
 import com.study.web.util.ResponseCode;
 import io.swagger.annotations.ApiOperation;
@@ -26,10 +30,17 @@ public class WxShareController extends JsonResultController{
     @Autowired
     private WxShareService wxShareService;
 
+    @Autowired
+    private WxDistributionService wxDistributionService;
+
     @ApiOperation("微信-根据微信用户id变更分享人")
     @RequestMapping(value = "/updateShareId", method = RequestMethod.POST)
     public ResultValue updateShareId(HttpServletRequest request, HttpServletResponse response, @RequestBody Share share) {
         try {
+            Distribution distribution = wxDistributionService.queryByWxUserId(share.getWxUserId());
+            if(null != distribution){
+                share.setShareId(share.getWxUserId());
+            }
             wxShareService.update(share);
             return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
