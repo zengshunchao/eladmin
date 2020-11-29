@@ -135,13 +135,16 @@ public class CourseController {
     }
 
     @ApiOperation("修改排序")
-    @PostMapping("updateSortNumber")
-    public ResponseEntity<Object> updateSortNumber(@RequestBody Course course) {
+    @RequestMapping("/updateSortNumber")
+    public ResponseEntity<Object> updateSortNumber(@RequestParam(value = "id") Long id, @RequestParam(value = "sortNumber") Integer sortNumber) {
         try {
-            if (null == course.getId()) {
+            Course course = new Course();
+            if (null == id) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            if (null == course.getSortNumber()) {
+            course.setId(id);
+            course.setSortNumber(sortNumber);
+            if (null == sortNumber) {
                 course.setSortNumber(100);
             }
             courseService.updateSortNumber(course);

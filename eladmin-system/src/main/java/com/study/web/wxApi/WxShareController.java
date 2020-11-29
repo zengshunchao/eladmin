@@ -3,9 +3,7 @@ package com.study.web.wxApi;
 import com.study.web.dto.ResultValue;
 import com.study.web.entity.Distribution;
 import com.study.web.entity.Share;
-import com.study.web.entity.WxUser;
 import com.study.web.service.WxDistributionService;
-import com.study.web.service.WxLoginService;
 import com.study.web.service.WxShareService;
 import com.study.web.util.ResponseCode;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequestMapping("/wxApi/share")
-public class WxShareController extends JsonResultController{
+public class WxShareController extends JsonResultController {
 
     @Autowired
     private WxShareService wxShareService;
