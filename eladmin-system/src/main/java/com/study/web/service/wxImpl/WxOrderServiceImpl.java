@@ -145,7 +145,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         //添加订单中课程绑定关系
         for (OrderCourseRel courseRel : courseNums) {
             courseRel.setOrderId(order.getId());
-            if(null != share){
+            if (null != share) {
                 courseRel.setShareId(share.getShareId());
             }
             orderCourseRelDao.insert(courseRel);
@@ -341,27 +341,42 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
     /**
-     *  添加定时任务
+     * 添加定时任务
+     *
      * @param order
      */
     private void addOrderTask(Order order) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(() -> {
-            Dict dict = dictDao.queryByDictName(Constants.AUTO_CHECK_TIME_KEY);
-            Map<String, Object> jobMap = new HashMap<>();
-            jobMap.put("orderId", order.getId());
-            String cron = TimeUtil.transCorn(TimeUtil.afterTime(order.getPayTime(),
-                    TimeUtil.DAY, Integer.valueOf(dict.getDictValue())));
-            quartzManager.addJob(String.valueOf(order.getId()), "动态订单自动核销任务触发器",
-                    String.valueOf(order.getId()), "ORDER_AUTO_CHECK_JOB_GROUP", AutoCheckOrderJob.class, cron, jobMap);
-        });
+        try {
+            // 根据订单id查询订单关联的课程信息
+            OrderCourseRel orderCourseRel = new OrderCourseRel();
+            orderCourseRel.setOrderId(order.getId());
+            List<OrderCourseRel> list = orderCourseRelDao.queryAll(orderCourseRel);
+            if (list != null && list.size() != 0) {
+                OrderCourseRel rel = list.get(0);
+                // 查询课程获取失效时间
+                CourseInfoDto course = courseDao.queryById(rel.getCourseId());
+                if (course != null && course.getExpireTime() != null) {
+                    ExecutorService executorService = Executors.newSingleThreadExecutor();
+                    executorService.execute(() -> {
+                        Map<String, Object> jobMap = new HashMap<>();
+                        jobMap.put("orderId", order.getId());
+                        String cron = TimeUtil.transCorn(course.getExpireTime());
+                        quartzManager.addJob(String.valueOf(order.getId()), "动态订单自动核销任务触发器",
+                                String.valueOf(order.getId()), "ORDER_AUTO_CHECK_JOB_GROUP", AutoCheckOrderJob.class, cron, jobMap);
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * 自动取消订单任务
+     *
      * @param order
      */
-    private void addCancelOrderTask(Order order){
+    private void addCancelOrderTask(Order order) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
             Dict dict = dictDao.queryByDictName(Constants.AUTO_CANCEL_ORDER_TIME);

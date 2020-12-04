@@ -95,5 +95,10 @@ public class CourseInfoDto  extends PageInfo {
      *  排序编号
      */
     private Integer sortNumber;
+
+    /**
+     *  失效时间
+     */
+    private Date expireTime;
 }
 

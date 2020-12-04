@@ -200,6 +200,7 @@ public class WxOrderController extends JsonResultController {
                 updateOrder.setPayTime(payTime);
                 updateOrder.setCheckCode(OrderCodeUtil.getRandomStringNum(12));
                 wxOrderService.updateOrderAndSaveCommission(updateOrder);
+                log.info("支付成功主动回调,订单商户号为{}", order.getOutTradeNo());
             }
             return successResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
         } catch (Exception e) {
@@ -210,12 +211,12 @@ public class WxOrderController extends JsonResultController {
 
     @ApiOperation("微信-根据用户和课程查询订单数量")
     @RequestMapping(value = "/countOrderByCourseAndUser", method = RequestMethod.GET)
-    public ResultValue countOrderByCourseAndUser(HttpServletRequest request, HttpServletResponse response, Long wxUserId,Long courseId) {
+    public ResultValue countOrderByCourseAndUser(HttpServletRequest request, HttpServletResponse response, Long wxUserId, Long courseId) {
         try {
-            if(null == wxUserId || null == courseId){
+            if (null == wxUserId || null == courseId) {
                 return errorResult(ResponseCode.BADREQUESTPARAM.getCode(), ResponseCode.BADREQUESTPARAM.getMsg());
             }
-            Integer count = wxOrderService.countOrderByCourseAndUser(wxUserId,courseId);
+            Integer count = wxOrderService.countOrderByCourseAndUser(wxUserId, courseId);
             return jsonResult(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), count);
         } catch (Exception e) {
             log.error("countOrderByCourseAndUser fail {}", e);

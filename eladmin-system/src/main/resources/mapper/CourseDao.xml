@@ -17,10 +17,11 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
         <result property="sortNumber" column="sort_number" jdbcType="INTEGER"/>
+        <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="BaseSql">
         id, course_name, course_money, course_commission, branch_name, branch_address,longitude,latitude,action_area, online_time, offline_time,
-        create_time, create_user,sort_number
+        create_time, create_user,sort_number,expire_time
     </sql>
     <!--查询单个-->
     <select id="queryById" resultMap="CourseMap" parameterType="java.lang.Long">
@@ -165,6 +166,7 @@
             <if test="offlineTime != null">offline_time ,</if>
             <if test="createTime != null">create_time ,</if>
             <if test="createUser != null and createUser != ''">create_user ,</if>
+            <if test="expireTime != null">expire_time ,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="courseName != null and courseName != ''">#{courseName} ,</if>
@@ -179,6 +181,7 @@
             <if test="offlineTime != null">#{offlineTime} ,</if>
             <if test="createTime != null">#{createTime} ,</if>
             <if test="createUser != null and createUser != ''">#{createUser} ,</if>
+            <if test="expireTime != null">#{expireTime} ,</if>
         </trim>
     </insert>
 
@@ -224,6 +227,9 @@
             </if>
             <if test="sortNumber != null">
                 sort_number = #{sortNumber},
+            </if>
+            <if test="expireTime != null">
+                expire_time = #{expireTime},
             </if>
         </set>
         where id = #{id}
