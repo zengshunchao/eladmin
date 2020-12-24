@@ -132,7 +132,7 @@ public class BackGroundOrderServiceImpl implements BackGroundOrderService {
                 int num = 0;
                 for (OrderCourseRel rel : orderCourseRels) {
                     CourseInfoDto courseInfoDto = courseDao.queryById(rel.getCourseId());
-                    courseNameList.add(courseInfoDto.getCourseName());
+                    courseNameList.add(courseInfoDto == null ? "课程已被删除" : courseInfoDto.getCourseName());
                     if (rel.getShareId() != null) {
                         WxUser user = wxUserDao.queryById(rel.getShareId());
                         shareNameList.add(user.getNickName());

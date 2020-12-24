@@ -100,5 +100,10 @@ public class CourseInfoDto  extends PageInfo {
      *  失效时间
      */
     private Date expireTime;
+
+    /**
+     *  销售数量-临时显示使用
+     */
+    private Integer saleNumber;
 }
 

@@ -326,7 +326,9 @@ public class WxOrderServiceImpl implements WxOrderService {
                 if (user != null) {
                     orderCourseRelDto.setShareName(user.getNickName());
                 }
-                BeanUtils.copyProperties(courseInfoDto, orderCourseRelDto);
+                if (courseInfoDto != null) {
+                    BeanUtils.copyProperties(courseInfoDto, orderCourseRelDto);
+                }
                 //查询课程封面图
                 List<Picture> covers = pictureDao.queryPictureListByType(rel.getCourseId(), Constants.PICTURE_TYPE_COVER);
                 orderCourseRelDto.setCoverPicture(covers);
